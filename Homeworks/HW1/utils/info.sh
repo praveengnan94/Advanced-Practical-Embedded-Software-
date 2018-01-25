@@ -1,3 +1,6 @@
+#FILE NAME: info.sh, DESCRIPTION: Script to provide system information to the user
+#AUTHOR: PRAVEEN GNANASEKARAN
+#TOOLS USED: BASH script.
 #!/bin/bash -x
 echo "User Information"
 uname --all 
