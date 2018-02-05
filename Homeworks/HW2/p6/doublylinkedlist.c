@@ -106,6 +106,12 @@ node_t* insert_at_position(node_t* head, uint32_t data , uint32_t position)
 		if(position > (sze+1))
 		{
 			printf("Position is greater than size- Node not inserted\n");
+			return NULL;
+		}
+		else if(position < 0)
+		{
+			printf("Position is negative\n");
+			return NULL;
 		}
 		else if(position ==0)
 		{
@@ -208,6 +214,12 @@ node_t* delete_from_position(node_t* head,size_t position)
 		if(position >= (sze))
 		{
 			printf("Position is greater than size- Node not deleted\n");
+			return NULL;
+		}
+		else if(position < 0)
+		{
+			printf("Position is negative\n");
+			return NULL;
 		}
 		else if(position == 0)
 		{
@@ -270,7 +282,7 @@ size_t size(node_t* head)
 }
 
 //DO NOT IMPLEMENT
-void print_mylist(node_t* head)
+void print_list(node_t* head)
 {
 	node_t* temp=head;
 	int cnt = 0;
@@ -292,48 +304,43 @@ void print_mylist(node_t* head)
 	}	
 }
 
-int main(void)
-{
+// int main(void)
+// {
 
-	head = insert_at_beginning(head, 16);	
+// 	head = insert_at_beginning(head, 16);	
 
-	head = insert_at_beginning(head, 24);	
+// 	head = insert_at_beginning(head, 24);	
 
-	head = insert_at_beginning(head, 32);	
+// 	head = insert_at_beginning(head, 32);	
 
-	head = insert_at_end(head, 64);
+// 	head = insert_at_end(head, 64);
 
-	head = insert_at_end(head, 72);
+// 	head = insert_at_end(head, 72);
 
-	head = insert_at_end(head, 84);
+// 	head = insert_at_end(head, 84);
 
-	head = insert_at_position(head, 80, 3);
+// 	head = insert_at_position(head, 80, 3);
 
-	print_mylist(head);
-	printf("\n------------------------------\n");
-	head = insert_at_position(head, 500, 3);
-	head = insert_at_position(head, 10, 0);	
-	print_mylist(head);
+// 	print_list(head);
+// 	head = insert_at_position(head, 500, 3);
+// 	head = insert_at_position(head, 10, 0);	
+// 	print_list(head);
 
-	printf("Size of list is %ld\n",size(head));
-	printf("\n------------------------------\n");
+// 	printf("Size of list is %ld\n",size(head));
 
-	head = delete_from_beginning(head);	
+// 	head = delete_from_beginning(head);	
 
-	print_mylist(head);
-	printf("\n------------------------------\n");
-	head = delete_from_end(head);	
-	print_mylist(head);
+// 	print_list(head);
+// 	head = delete_from_end(head);	
+// 	print_list(head);
 
-	printf("\n------------------------------\n");
-	printf("Size of list is %ld\n",size(head));
-	head = delete_from_position(head, 2);
+// 	printf("Size of list is %ld\n",size(head));
+// 	head = delete_from_position(head, 2);
 
-	print_mylist(head);
-	printf("\n------------------------------\n");
+// 	print_list(head);
 
-	return 0;	
-}
+// 	return 0;	
+// }
 
 
 
