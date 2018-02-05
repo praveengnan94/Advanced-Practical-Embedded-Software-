@@ -22,15 +22,15 @@ static void test_insert_at_position_null_pointer(void **state){
 }
 
 static void test_delete_from_beginning_null_pointer(void **state){
-	assert_non_null(delete_from_beginning(NULL));
+	assert_null(delete_from_beginning(NULL));
 }
 
 static void test_delete_from_end_null_pointer(void **state){
-	assert_non_null(delete_from_end(NULL));
+	assert_null(delete_from_end(NULL));
 }
 
 static void test_delete_from_position_null_pointer(void **state){
-	assert_non_null(delete_from_position(NULL,0));
+	assert_null(delete_from_position(NULL,0));
 }
 
 static void test_size(void **state){
