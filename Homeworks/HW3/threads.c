@@ -1,13 +1,6 @@
 #include "threads.h"
 
 
-typedef struct threadinfo
-{
-	char logfilename[20];	
-	pthread_t pid;
-	pid_t tid;
-}threadinf;
-
 threadinf actualinfo;
 
 void *childThread1(void *threadp)
@@ -22,6 +15,28 @@ void *childThread1(void *threadp)
 
     clock_gettime(CLOCK_REALTIME, &start_time);
     printf("childThread1 FILE NAME Is %s\n",threadParams->logfilename );
+
+    //open text file, read all characters and insert in array
+	FILE *fp;
+	fp=fopen("Valentinesday.txt", "r");
+
+	if(fp==NULL)
+	{
+		perror("Failed to open file ");
+
+	}
+	char c;
+	while((c = fgetc(fp)) != EOF)
+	{
+		// printf("%c",c);
+		insert(c,head);
+	}
+
+ 	// insert('b',head);
+	// insert('B',head);
+	// insert('a',head);
+
+	print(head);
 }
 
 void *childThread2(void *threadp)
@@ -75,19 +90,19 @@ void *masterThread(void *threadp)
 	                      (void *)&(actualinfo) // parameters to pass in
 	                     );
 
-    i=2;
-	       rc=pthread_attr_init(&rt_sched_attr[i]);
-	       rc=pthread_attr_setinheritsched(&rt_sched_attr[i], PTHREAD_EXPLICIT_SCHED);
-	       rc=pthread_attr_setschedpolicy(&rt_sched_attr[i], SCHED_FIFO);
+    // i=2;
+	   //     rc=pthread_attr_init(&rt_sched_attr[i]);
+	   //     rc=pthread_attr_setinheritsched(&rt_sched_attr[i], PTHREAD_EXPLICIT_SCHED);
+	   //     rc=pthread_attr_setschedpolicy(&rt_sched_attr[i], SCHED_FIFO);
 
-	       rt_param[i].sched_priority=rt_max_prio-i-1;
-	       pthread_attr_setschedparam(&rt_sched_attr[i], &rt_param[i]);
+	   //     rt_param[i].sched_priority=rt_max_prio-i-1;
+	   //     pthread_attr_setschedparam(&rt_sched_attr[i], &rt_param[i]);
 
-	       pthread_create(&threads[i],   // pointer to thread descriptor
-	                      (void *)0,     // use default attributes
-	                      childThread2, // thread function entry point
-	                      (void *)&(actualinfo) // parameters to pass in
-	                     );
+	   //     pthread_create(&threads[i],   // pointer to thread descriptor
+	   //                    (void *)0,     // use default attributes
+	   //                    childThread2, // thread function entry point
+	   //                    (void *)&(actualinfo) // parameters to pass in
+	   //                   );
 
    pthread_join(threads[1], NULL);
    
@@ -115,7 +130,8 @@ int main (int argc, char *argv[])
        CPU_SET(i, &cpuset);
 
    mainpid=getpid();
-
+   for(i=0;i<26;i++) //create 26 lists with values as 0
+		push(&head, 0);
    rt_max_prio = sched_get_priority_max(SCHED_FIFO);
    rt_min_prio = sched_get_priority_min(SCHED_FIFO);
 
@@ -127,8 +143,6 @@ int main (int argc, char *argv[])
    pthread_attr_getscope(&main_attr, &scope);
 	
 	i=0;
-   // for(i=0; i < NUM_THREADS; i++)
-   {
        rc=pthread_attr_init(&rt_sched_attr[i]);
        rc=pthread_attr_setinheritsched(&rt_sched_attr[i], PTHREAD_EXPLICIT_SCHED);
        rc=pthread_attr_setschedpolicy(&rt_sched_attr[i], SCHED_FIFO);
@@ -142,10 +156,8 @@ int main (int argc, char *argv[])
                       masterThread, // thread function entry point
                       (void *)&(actualinfo) // parameters to pass in
                      );
-   }
 
     pthread_join(threads[0], NULL);
-    // pthread_join(threads[1], NULL);
 
 
    printf("\nTEST COMPLETE\n");
