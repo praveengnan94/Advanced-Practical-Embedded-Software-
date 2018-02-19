@@ -1,5 +1,14 @@
-#include "threads.h"
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 02/18/2018
+* DESCRITPTION  : This program creates a thread program which creates three threads, searches a text file and 
+                  accepts user signals to exit thread after writing to a log file
+      
+* HEADER FILES  : threads.h
+****************************************************************/
 
+
+#include "threads.h"
 
 threadinf actualinfo;
 
@@ -150,6 +159,7 @@ void *childThread2(void *threadp)
     struct timespec thread_dt = {0, 0};
     threadinf *threadParams = (threadinf *)threadp;
 
+    clock_gettime(CLOCK_REALTIME, &start_time);
 
     if(signal(SIGUSR2,child2_sigHandler)==SIG_ERR)
       printf("Signal 2 error\n");
@@ -175,14 +185,52 @@ void *childThread2(void *threadp)
     pthread_mutex_unlock(&mutexlock);
 
     //get thread id ,pid and write to log file
+    struct timespec tim, tim2;
+     tim.tv_sec = 0;
+     tim.tv_nsec = 1000;
 
     while(1)
     {
       if(glb_var_sig2==0)
       {
-	    // 	shell command to find cpu utilization and write to log file
-        // printf("%d",system("top"));
-	    	// nanosleep(100000);// for 100 milli seconds
+        clock_gettime(CLOCK_REALTIME, &start_time);
+	      // 	shell command to find cpu utilization and write to log file
+        pthread_mutex_lock(&mutexlock);
+        fp=fopen(threadParams->logfilename,"a+");
+
+          if(fp==NULL)
+          {
+            perror("Error opening file");
+            exit(1);
+          }
+          sprintf(filestring,"Time after 100ms %ld\n", start_time.tv_sec);
+          fwrite(filestring,sizeof(char),strlen(filestring),fp);
+
+        sprintf(filestring,"%d",system("uptime > htop"));
+        FILE *htop;
+
+        htop=fopen("htop","r");
+        
+        while(1)        
+        {
+          if (fgets(filestring,300, htop) == NULL) 
+          {
+              break;
+          }
+          fwrite(filestring,sizeof(char),strlen(filestring),fp);
+        }
+
+        fclose(htop);
+        fclose(fp); //causes seg fault
+        pthread_mutex_unlock(&mutexlock);
+
+	    	if(nanosleep(&tim , &tim2) < 0 )   
+         {
+            printf("Nano sleep system call failed \n");
+            exit(1);
+         }
+
+        // printf("Slept for 100ms \n");
     	}
     	else
     	{

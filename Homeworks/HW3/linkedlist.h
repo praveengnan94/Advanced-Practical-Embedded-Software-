@@ -1,3 +1,13 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 02/18/2018
+* DESCRITPTION  : This program all definitions for the linked list implementations
+      
+* SOURCE FILES  : threads.c
+* HEADER FILES  : threads.h, customsignal.h
+
+REFERENCE LINKS : https://stackoverflow.com/questions/14544539/linked-lists-in-c
+****************************************************************/
 
 /* Link list node */
 struct Node

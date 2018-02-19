@@ -1,3 +1,13 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 02/18/2018
+* DESCRITPTION  : This program all definitions,macros and structure definitions
+					for the parameters and libraries used in the program
+      
+* SOURCE FILES  : threads.c
+* HEADER FILES  : customsignal.h, linkedlist.h
+****************************************************************/
+
 #define _GNU_SOURCE
 #include <pthread.h>
 #include <stdlib.h>
