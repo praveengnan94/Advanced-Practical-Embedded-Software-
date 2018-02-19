@@ -5,7 +5,13 @@
 #include <sched.h>
 #include <time.h>
 #include <string.h>
-#include <sys/syscall.h>
+#include <errno.h>
+#include <unistd.h>
+#include <syscall.h>
+#include <sys/types.h>
+#include <signal.h>
+#include "linkedlist.h"
+#include "customsignal.h"
 
 #define NUM_THREADS (3)
 #define NUM_CPUS (1)
@@ -17,6 +23,8 @@
 #define ERROR (-1)
 #define OK (0)
 
+char filestring[5000];
+
 pid_t getpid(void);
 pid_t gettid(void);
 pthread_t threads[NUM_THREADS];
@@ -26,6 +34,8 @@ struct sched_param rt_param[NUM_THREADS];
 struct sched_param main_param;
 pthread_attr_t main_attr;
 pid_t mainpid;
+pthread_mutex_t mutexlock;
+pthread_mutexattr_t mutexattr;
 int rc;
 
 /*Struct for threadinfo*/
@@ -37,74 +47,3 @@ typedef struct threadinfo
 }threadinf;
 
 
-/* Link list node */
-struct Node
-{
-    int key;
-    struct Node* next;
-};
-struct Node* head = NULL;
-
-/* Given a reference (pointer to pointer) to the head
-  of a list and an int, push a new node on the front
-  of the list. */
-void push(struct Node** head_ref, int new_key)
-{
-    /* allocate node */
-    struct Node* new_node =
-            (struct Node*) malloc(sizeof(struct Node));
- 
-    /* put in the key  */
-    new_node->key  = new_key;
- 
-    /* link the old list off the new node */
-    new_node->next = (*head_ref);
- 
-    /* move the head to point to the new node */
-    (*head_ref)    = new_node;
-}
-
-void print(struct Node* head_ref)
-{
-	struct Node * temp;
-
-	temp=head;
-	while(temp!=NULL)
-	{
-		printf("%d\n",temp->key);
-		temp=temp->next;
-	}
-}
-void insert(char a,struct Node* head_ref)
-{
-	int charnum,i;
-	charnum=(int)a;
-	struct Node* temp;
-
-	if((a>=65)&&(a<=90))// upper case letters
-	{
-		charnum=charnum-65;
-		// printf("Upper Char %c number %d\n",a,charnum);
-		temp=head;
-		for(i=0;i<charnum;i++)
-		{
-			temp=temp->next;
-		}
-
-		temp->key=temp->key+1;
-
-	}
-	else if ((a>=97)&&(a<=122))
-	{
-		
-		charnum=charnum-97;
-		// printf("Lower Char %c number %d\n",a,charnum);
-		temp=head;
-		for(i=0;i<charnum;i++)
-		{
-			temp=temp->next;
-		}
-
-		temp->key=temp->key+1;
-	}
-}

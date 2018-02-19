@@ -1,12 +1,3 @@
-#define _GNU_SOURCE
-#include <pthread.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sched.h>
-#include <time.h>
-#include <string.h>
-#include <sys/syscall.h>
-
 
 /* Link list node */
 struct Node
@@ -46,6 +37,7 @@ void print(struct Node* head_ref)
 		temp=temp->next;
 	}
 }
+
 void insert(char a,struct Node* head_ref)
 {
 	int charnum,i;
@@ -78,21 +70,4 @@ void insert(char a,struct Node* head_ref)
 
 		temp->key=temp->key+1;
 	}
-}
-
-int main()
-{
-	int i=0;
-	for(i=0;i<26;i++) //create 26 lists with values as 0
-		push(&head, 0);
-
-	printf("%d %d\n",'b','B');
-
-	insert('b',head);
-	insert('B',head);
-	insert('a',head);
-
-	print(head);
-
-	return 0;
 }

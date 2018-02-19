@@ -8,33 +8,133 @@ void *childThread1(void *threadp)
 	int i;
     pthread_t thread;
     cpu_set_t cpuset;
+    FILE *fp;
     struct timespec start_time = {0, 0};
     struct timespec finish_time = {0, 0};
     struct timespec thread_dt = {0, 0};
     threadinf *threadParams = (threadinf *)threadp;
+    
+    if(signal(SIGUSR1,child1_sigHandler)==SIG_ERR)
+      printf("Signal 1 error\n");
 
     clock_gettime(CLOCK_REALTIME, &start_time);
     printf("childThread1 FILE NAME Is %s\n",threadParams->logfilename );
 
-    //open text file, read all characters and insert in array
-	FILE *fp;
-	fp=fopen("Valentinesday.txt", "r");
 
-	if(fp==NULL)
+    threadParams->pid=getpid();
+    threadParams->tid =pthread_self();
+
+    pthread_mutex_lock(&mutexlock);
+    fp=fopen(threadParams->logfilename,"a+");
+
+      if(fp==NULL)
+      {
+        perror("Error opening file");
+        exit(1);
+      }
+
+    sprintf(filestring,"CHILD THREAD 1 POSIX id=%ld Linux id=%d \n", threadParams->pid,threadParams->tid);
+    fwrite(filestring,sizeof(char),strlen(filestring),fp);
+    
+    sprintf(filestring,"Start time child1 %ld\n", start_time.tv_sec);
+    fwrite(filestring,sizeof(char),strlen(filestring),fp);
+    fclose(fp); //causes seg fault
+    pthread_mutex_unlock(&mutexlock); 
+
+    //open text file, read all characters and insert in array
+	FILE *fp1;
+  
+	fp1=fopen("Valentinesday.txt", "r");
+
+	if(fp1==NULL)
 	{
 		perror("Failed to open file ");
 
 	}
+
 	char c;
-	while((c = fgetc(fp)) != EOF)
+	while((c = fgetc(fp1)) != EOF)
 	{
-		// printf("%c",c);
-		insert(c,head);
+    if(glb_var_sig1==0)
+		  insert(c,head);
+    else
+    {
+      pthread_mutex_lock(&mutexlock);
+      fp=fopen(threadParams->logfilename,"a+");
+
+      if(fp==NULL)
+      {
+        perror("Error opening file");
+        exit(1);
+      }
+      clock_gettime(CLOCK_REALTIME, &finish_time);
+      sprintf(filestring,"USR command received at time %ld. Exiting child 1\n", finish_time.tv_sec);
+      fwrite(filestring,sizeof(char),strlen(filestring),fp);
+      fclose(fp);
+      fclose(fp1);
+      pthread_mutex_unlock(&mutexlock); 
+      pthread_exit(NULL);
+    }
 	}
 
- 	// insert('b',head);
-	// insert('B',head);
-	// insert('a',head);
+  pthread_mutex_lock(&mutexlock);
+  fp=fopen(threadParams->logfilename,"a+");
+
+  if(fp==NULL)
+  {
+    perror("Error opening file");
+    exit(1);
+  }
+
+  //Find all characters which have key value as 3
+  strcpy(filestring,"Characters which are repeated thrice are ");
+  fwrite(filestring,sizeof(char),strlen(filestring),fp);
+  fclose(fp);
+  pthread_mutex_unlock(&mutexlock); 
+
+  int cnt=0;
+  struct Node*  temp=head;
+  int val;
+
+  while(temp!=NULL)
+  {
+    if(glb_var_sig1==0)
+    {
+      val=temp->key;
+      temp=temp->next;
+      if(val==3)
+      {
+        pthread_mutex_lock(&mutexlock);
+        fp=fopen(threadParams->logfilename,"a+");
+        sprintf(filestring,"%c, ", cnt+65);
+        fwrite(filestring,sizeof(char),strlen(filestring),fp);
+        fclose(fp);
+        pthread_mutex_unlock(&mutexlock); 
+      }
+      cnt++;
+    }
+    else
+    {
+      clock_gettime(CLOCK_REALTIME, &finish_time);
+      sprintf(filestring,"USR1 command received at time %ld. Exiting child 1\n", finish_time.tv_sec);
+      fwrite(filestring,sizeof(char),strlen(filestring),fp);
+      fclose(fp);
+      pthread_mutex_unlock(&mutexlock); 
+      pthread_exit(NULL);
+    }
+  }
+  
+
+  pthread_mutex_lock(&mutexlock);
+  fp=fopen(threadParams->logfilename,"a+");
+  strcpy(filestring,"\n");
+  fwrite(filestring,sizeof(char),strlen(filestring),fp);
+
+  clock_gettime(CLOCK_REALTIME, &finish_time);
+  sprintf(filestring,"Finish time child1 %ld\n", finish_time.tv_sec);
+  fwrite(filestring,sizeof(char),strlen(filestring),fp);
+  fclose(fp);
+  pthread_mutex_unlock(&mutexlock); 
 
 	print(head);
 }
@@ -42,6 +142,7 @@ void *childThread1(void *threadp)
 void *childThread2(void *threadp)
 {
 	int i;
+  FILE *fp; 
     pthread_t thread;
     cpu_set_t cpuset;
     struct timespec start_time = {0, 0};
@@ -49,32 +150,94 @@ void *childThread2(void *threadp)
     struct timespec thread_dt = {0, 0};
     threadinf *threadParams = (threadinf *)threadp;
 
-    clock_gettime(CLOCK_REALTIME, &start_time);
-    printf("childThread2 FILE NAME Is %s\n",threadParams->logfilename );
+
+    if(signal(SIGUSR2,child2_sigHandler)==SIG_ERR)
+      printf("Signal 2 error\n");
+
+    threadParams->pid=getpid();
+    threadParams->tid = pthread_self();
+
+    pthread_mutex_lock(&mutexlock);
+    fp=fopen(threadParams->logfilename,"a+");
+
+      if(fp==NULL)
+      {
+        perror("Error opening file");
+        exit(1);
+      }
+
+    sprintf(filestring,"CHILD THREAD 2 POSIX id=%ld Linux id=%d \n", threadParams->pid,threadParams->tid);
+    fwrite(filestring,sizeof(char),strlen(filestring),fp);
+    
+    sprintf(filestring,"Start time child2 %ld\n", start_time.tv_sec);
+    fwrite(filestring,sizeof(char),strlen(filestring),fp);
+    fclose(fp); //causes seg fault
+    pthread_mutex_unlock(&mutexlock);
+
+    //get thread id ,pid and write to log file
+
+    while(1)
+    {
+      if(glb_var_sig2==0)
+      {
+	    // 	shell command to find cpu utilization and write to log file
+        // printf("%d",system("top"));
+	    	// nanosleep(100000);// for 100 milli seconds
+    	}
+    	else
+    	{
+        pthread_mutex_lock(&mutexlock);
+
+        fp=fopen(threadParams->logfilename,"a+");
+        if(fp==NULL)
+        {
+          perror("Error opening file");
+          exit(1);
+        }
+
+    		clock_gettime(CLOCK_REALTIME, &finish_time);
+        sprintf(filestring,"USR2 command received at time %ld. Exiting child 2\n", finish_time.tv_sec);
+        fwrite(filestring,sizeof(char),strlen(filestring),fp);
+        fclose(fp);
+
+        pthread_mutex_unlock(&mutexlock);
+    		pthread_exit(NULL);
+    	}
+    }
 }
 
 
 void *masterThread(void *threadp)
 {
-	int i;
+    int i;
     pthread_t thread;
-    cpu_set_t cpuset;
     struct timespec start_time = {0, 0};
     struct timespec finish_time = {0, 0};
     threadinf *threadParams = (threadinf *)threadp;
+    FILE *fp;
 
     clock_gettime(CLOCK_REALTIME, &start_time);
     printf("masterThread FILE NAME Is %s\n",threadParams->logfilename );
-    // printf("\nPOSIX thread idx=%d started at time %ld\n", threadParams->threadIdx, start_time.tv_sec);
 
-    threadParams->pid=pthread_self();
+    pthread_mutex_lock(&mutexlock); 
 
-    // CPU_ZERO(&cpuset);
-    // threadParams->tid = (pid_t) syscall (SYS_gettid);
- 
+    fp=fopen(threadParams->logfilename,"a+");
+    if(fp==NULL)
+    {
+      perror("Error opening file");
+      exit(1);
+    }
 
-    clock_gettime(CLOCK_REALTIME, &finish_time);
-    // printf("\nThread idx=%d finsihed at time %ld\n", threadParams->threadIdx, finish_time.tv_sec);
+    threadParams->pid=getpid();
+    threadParams->tid = pthread_self();
+
+    sprintf(filestring,"MASTER THREAD POSIX id=%ld Linux id=%d \n", threadParams->pid,threadParams->tid);
+    fwrite(filestring,sizeof(char),strlen(filestring),fp);
+    
+    sprintf(filestring,"Start time master %ld\n", start_time.tv_sec);
+    fwrite(filestring,sizeof(char),strlen(filestring),fp);
+    fclose(fp); //causes seg fault
+    pthread_mutex_unlock(&mutexlock); 
 
     i=1;
 	       rc=pthread_attr_init(&rt_sched_attr[i]);
@@ -90,25 +253,37 @@ void *masterThread(void *threadp)
 	                      (void *)&(actualinfo) // parameters to pass in
 	                     );
 
-    // i=2;
-	   //     rc=pthread_attr_init(&rt_sched_attr[i]);
-	   //     rc=pthread_attr_setinheritsched(&rt_sched_attr[i], PTHREAD_EXPLICIT_SCHED);
-	   //     rc=pthread_attr_setschedpolicy(&rt_sched_attr[i], SCHED_FIFO);
+    i=2;
+	       rc=pthread_attr_init(&rt_sched_attr[i]);
+	       rc=pthread_attr_setinheritsched(&rt_sched_attr[i], PTHREAD_EXPLICIT_SCHED);
+	       rc=pthread_attr_setschedpolicy(&rt_sched_attr[i], SCHED_FIFO);
 
-	   //     rt_param[i].sched_priority=rt_max_prio-i-1;
-	   //     pthread_attr_setschedparam(&rt_sched_attr[i], &rt_param[i]);
+	       rt_param[i].sched_priority=rt_max_prio-i-1;
+	       pthread_attr_setschedparam(&rt_sched_attr[i], &rt_param[i]);
 
-	   //     pthread_create(&threads[i],   // pointer to thread descriptor
-	   //                    (void *)0,     // use default attributes
-	   //                    childThread2, // thread function entry point
-	   //                    (void *)&(actualinfo) // parameters to pass in
-	   //                   );
+	       pthread_create(&threads[i],   // pointer to thread descriptor
+	                      (void *)0,     // use default attributes
+	                      childThread2, // thread function entry point
+	                      (void *)&(actualinfo) // parameters to pass in
+	                     );
 
    pthread_join(threads[1], NULL);
-   
+   pthread_join(threads[2], NULL);
 
-    //    pthread_join(threads[2], NULL);
 
+   fp=fopen(threadParams->logfilename,"a+");
+    if(fp==NULL)
+    {
+      perror("Error opening file");
+      exit(1);
+    }
+
+   pthread_mutex_lock(&mutexlock);
+   clock_gettime(CLOCK_REALTIME, &finish_time);
+   sprintf(filestring,"Finish time master %ld\n", finish_time.tv_sec);
+   fwrite(filestring,sizeof(char),strlen(filestring),fp);
+   fclose(fp);
+   pthread_mutex_unlock(&mutexlock);
     // pthread_exit(&sum);
 }
 
@@ -140,6 +315,13 @@ int main (int argc, char *argv[])
    rc=sched_setscheduler(getpid(), SCHED_FIFO, &main_param);
    if(rc < 0) perror("main_param");
 
+
+   rc= pthread_mutex_init(&mutexlock,&mutexattr);
+    if(rc!=0)
+    {
+      perror("MUTEX ERROR ");
+    }
+
    pthread_attr_getscope(&main_attr, &scope);
 	
 	i=0;
@@ -159,6 +341,7 @@ int main (int argc, char *argv[])
 
     pthread_join(threads[0], NULL);
 
+    pthread_mutex_destroy(&mutexlock);
 
    printf("\nTEST COMPLETE\n");
 }
