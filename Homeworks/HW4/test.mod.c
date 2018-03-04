@@ -18,19 +18,21 @@ static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
 	{ 0x3d6976bf, __VMLINUX_SYMBOL_STR(module_layout) },
-	{ 0x651b1d9e, __VMLINUX_SYMBOL_STR(kthread_stop) },
-	{ 0x5d802f6e, __VMLINUX_SYMBOL_STR(wake_up_process) },
-	{ 0xca2e829b, __VMLINUX_SYMBOL_STR(kthread_create_on_node) },
-	{ 0xdb7305a1, __VMLINUX_SYMBOL_STR(__stack_chk_fail) },
+	{ 0x55e1780b, __VMLINUX_SYMBOL_STR(noop_llseek) },
+	{ 0x78bcdc29, __VMLINUX_SYMBOL_STR(remove_proc_entry) },
+	{ 0x263e6ebd, __VMLINUX_SYMBOL_STR(proc_create_data) },
+	{ 0xe2d5255a, __VMLINUX_SYMBOL_STR(strcmp) },
 	{ 0x33fcf44a, __VMLINUX_SYMBOL_STR(__kfifo_out_r) },
 	{ 0x9829fc11, __VMLINUX_SYMBOL_STR(__kfifo_out_peek_r) },
 	{ 0xce4e47b6, __VMLINUX_SYMBOL_STR(__kfifo_skip_r) },
 	{ 0x7846af3e, __VMLINUX_SYMBOL_STR(__kfifo_len_r) },
 	{ 0x3955fcf6, __VMLINUX_SYMBOL_STR(__kfifo_in_r) },
-	{ 0xf9a482f9, __VMLINUX_SYMBOL_STR(msleep) },
-	{ 0x952664c5, __VMLINUX_SYMBOL_STR(do_exit) },
 	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
-	{ 0xb3f7646e, __VMLINUX_SYMBOL_STR(kthread_should_stop) },
+	{ 0x2484adc3, __VMLINUX_SYMBOL_STR(__kfifo_to_user_r) },
+	{ 0xdb7305a1, __VMLINUX_SYMBOL_STR(__stack_chk_fail) },
+	{ 0x27cfea5a, __VMLINUX_SYMBOL_STR(mutex_unlock) },
+	{ 0xfeebc7c4, __VMLINUX_SYMBOL_STR(__kfifo_from_user_r) },
+	{ 0x615b2fa, __VMLINUX_SYMBOL_STR(mutex_lock_interruptible) },
 	{ 0xbdfb6dbb, __VMLINUX_SYMBOL_STR(__fentry__) },
 };
 
@@ -40,4 +42,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "F60507B2702C600896741D4");
+MODULE_INFO(srcversion, "2082DD560C22F049432B5FE");
