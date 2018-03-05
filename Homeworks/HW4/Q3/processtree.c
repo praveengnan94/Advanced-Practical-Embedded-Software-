@@ -8,7 +8,7 @@ int get_numChild(struct list_head *child)
 	int numChild = 0;
 	struct list_head *p;
 			
-								
+								//list_for_each() iterates over a list from the beginning to the end of the list
 	list_for_each(p, child){
 		numChild++;
 	}

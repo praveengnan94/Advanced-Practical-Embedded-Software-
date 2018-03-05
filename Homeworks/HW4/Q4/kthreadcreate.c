@@ -1,3 +1,5 @@
+//https://sysplay.in/blog/tag/kernel-threads/
+
 #include "kthreadcreate.h"
 
 static struct task_struct *thread_st1;
@@ -24,7 +26,7 @@ static int thread_two(void *unused)
 
         printk(KERN_INFO "fifo len: %u\n", kfifo_len(&test));
         
-        ssleep(3`);
+        ssleep(3);
     }
 
     printk(KERN_INFO "Second Thread Stopping\n");
