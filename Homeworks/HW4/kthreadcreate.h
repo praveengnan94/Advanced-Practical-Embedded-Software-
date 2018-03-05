@@ -13,6 +13,8 @@
 
 typedef STRUCT_KFIFO_REC_1(FIFO_SIZE) mytest;
 
+char buf[100];
+unsigned int ret;
 static mytest test;
 
 MODULE_LICENSE("GPL");
