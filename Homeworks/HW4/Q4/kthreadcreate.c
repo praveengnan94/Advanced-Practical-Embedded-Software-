@@ -11,8 +11,6 @@ static int thread_two(void *unused)
 
     while (!kthread_should_stop())
     {
-        
-
         /* put in variable length data */
         strcpy(buf,"SOMEMESSAGE");
         kfifo_in(&test, buf, strlen(buf));
@@ -26,7 +24,7 @@ static int thread_two(void *unused)
 
         printk(KERN_INFO "fifo len: %u\n", kfifo_len(&test));
         
-        ssleep(5);
+        ssleep(3`);
     }
 
     printk(KERN_INFO "Second Thread Stopping\n");
@@ -39,17 +37,18 @@ static int thread_one(void *unused)
 {
     while (!kthread_should_stop())
     {
-        printk(KERN_INFO "Thread 1 Running\n");
         
         /* check the correctness of all values in the fifo */
         while (!kfifo_is_empty(&test)) {
+            printk(KERN_INFO "Thread 1 Running\n");
             ret = kfifo_out(&test, buf, sizeof(buf));
             buf[ret] = '\0';
             printk(KERN_INFO "item = %.*s\n", ret, buf);
-        }
-        printk(KERN_INFO "test passed\n");
+            printk(KERN_INFO "test passed\n");
 
-        ssleep(5);
+        }
+        
+        // ssleep(5);
     }
 
     printk(KERN_INFO "First Thread Stopping\n");
@@ -81,13 +80,19 @@ static int __init init_thread(void)
     }
     else
         printk(KERN_INFO "Thread 2 creation failed\n");
+
+    // rc= pthread_mutex_init(&mutexlock,&mutexattr);
+    // if(rc!=0)
+    // {
+    //   perror("MUTEX ERROR ");
+    // }
+
     return 0;
 }
 // Module Exit
 static void __exit cleanup_thread(void)
 {
     printk("Cleaning Up\n");
-    // remove_proc_entry(PROC_FIFO, NULL);
     if (thread_st1)
    {
        kthread_stop(thread_st1);
@@ -98,6 +103,9 @@ static void __exit cleanup_thread(void)
        kthread_stop(thread_st2);
        printk(KERN_INFO "Thread 2 stopped");
    }
+
+   // pthread_mutex_t mutexlock;
+   // pthread_mutexattr_t mutexattr;
 }
 
 module_init(init_thread);
