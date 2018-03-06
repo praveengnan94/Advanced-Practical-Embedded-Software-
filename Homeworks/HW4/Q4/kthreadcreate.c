@@ -8,25 +8,40 @@ static struct task_struct *thread_st2;
 
 static int thread_two(void *unused)
 {
-
+    char prevpid[50], currentpid[50], nextpid[50];
     printk(KERN_INFO "record fifo test start\n");
 
     while (!kthread_should_stop())
     {
+        printk(KERN_INFO "Thread 1 Running\n");
+        
+
+        sprintf(prevpid, "Previous PID: %d | vruntime: %llu\n", list_prev_entry(current, tasks)->pid, 
+                                        list_prev_entry(current, tasks)->se.vruntime);
+
+        sprintf(currentpid, "Current PID: %d | vruntime: %llu\n",  current->pid, 
+                                    current->se.vruntime);
+
+        sprintf(nextpid, "Next PID: %d | vruntime: %llu\n",     list_next_entry(current, tasks)->pid, 
+                                    list_next_entry(current, tasks)->se.vruntime  );
+
+            
         /* put in variable length data */
-        strcpy(buf,"SOMEMESSAGE");
-        kfifo_in(&test, buf, strlen(buf));
+        // strcpy(buf,"SOMEMESSAGE");
+        kfifo_in(&test, prevpid, strlen(prevpid));
+        kfifo_in(&test, currentpid, strlen(currentpid));
+        kfifo_in(&test, nextpid, strlen(nextpid));
 
         /* show the first record without removing from the fifo */
-        ret = kfifo_out_peek(&test, buf, sizeof(buf));
-        if (ret)
-        {
-            printk(KERN_INFO "%.*s\n", ret, buf);
-        }
+        // ret = kfifo_out_peek(&test, buf, sizeof(buf));
+        // if (ret)
+        // {
+        //     printk(KERN_INFO "%.*s\n", ret, buf);
+        // }
 
         printk(KERN_INFO "fifo len: %u\n", kfifo_len(&test));
         
-        ssleep(3);
+        ssleep(10);
     }
 
     printk(KERN_INFO "Second Thread Stopping\n");
@@ -37,15 +52,16 @@ static int thread_two(void *unused)
 // Function executed by kernel thread
 static int thread_one(void *unused)
 {
+
     while (!kthread_should_stop())
     {
         
         /* check the correctness of all values in the fifo */
         while (!kfifo_is_empty(&test)) {
-            printk(KERN_INFO "Thread 1 Running\n");
+            printk(KERN_INFO "Thread 2 Running\n");
             ret = kfifo_out(&test, buf, sizeof(buf));
             buf[ret] = '\0';
-            printk(KERN_INFO "item = %.*s\n", ret, buf);
+            printk(KERN_INFO "%.*s\n", ret, buf);
             printk(KERN_INFO "test passed\n");
 
         }
@@ -55,7 +71,8 @@ static int thread_one(void *unused)
 
     printk(KERN_INFO "First Thread Stopping\n");
     do_exit(0);
-    return 0;
+    return 0;   
+    
 }
 
 // Module Initialization
