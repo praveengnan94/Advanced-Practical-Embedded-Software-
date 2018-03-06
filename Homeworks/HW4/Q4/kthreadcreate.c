@@ -1,4 +1,10 @@
-//https://sysplay.in/blog/tag/kernel-threads/
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 03/06/2018
+* DESCRIPTION  : This program creates a thread program which creates two threads, and shares thread info using kfifo
+* REFERENCE : https://sysplay.in/blog/tag/kernel-threads/
+* HEADER FILES  : kthreadcreate.h
+****************************************************************/
 
 #include "kthreadcreate.h"
 
@@ -16,32 +22,27 @@ static int thread_two(void *unused)
         printk(KERN_INFO "Thread 1 Running\n");
         
 
-        sprintf(prevpid, "Previous PID: %d | vruntime: %llu\n", list_prev_entry(current, tasks)->pid, 
+        sprintf(prevpid, "Previous PID: %d, vruntime: %llu\n", list_prev_entry(current, tasks)->pid, 
                                         list_prev_entry(current, tasks)->se.vruntime);
 
-        sprintf(currentpid, "Current PID: %d | vruntime: %llu\n",  current->pid, 
+        sprintf(currentpid, "Current PID: %d, vruntime: %llu\n",  current->pid, 
                                     current->se.vruntime);
 
-        sprintf(nextpid, "Next PID: %d | vruntime: %llu\n",     list_next_entry(current, tasks)->pid, 
+        sprintf(nextpid, "Next PID: %d, vruntime: %llu\n",     list_next_entry(current, tasks)->pid, 
                                     list_next_entry(current, tasks)->se.vruntime  );
 
-            
+        mutex_lock(&mutexlock);
+
         /* put in variable length data */
-        // strcpy(buf,"SOMEMESSAGE");
         kfifo_in(&test, prevpid, strlen(prevpid));
         kfifo_in(&test, currentpid, strlen(currentpid));
         kfifo_in(&test, nextpid, strlen(nextpid));
 
-        /* show the first record without removing from the fifo */
-        // ret = kfifo_out_peek(&test, buf, sizeof(buf));
-        // if (ret)
-        // {
-        //     printk(KERN_INFO "%.*s\n", ret, buf);
-        // }
+        mutex_unlock(&mutexlock);
 
         printk(KERN_INFO "fifo len: %u\n", kfifo_len(&test));
         
-        ssleep(10);
+        ssleep(3);
     }
 
     printk(KERN_INFO "Second Thread Stopping\n");
@@ -59,14 +60,14 @@ static int thread_one(void *unused)
         /* check the correctness of all values in the fifo */
         while (!kfifo_is_empty(&test)) {
             printk(KERN_INFO "Thread 2 Running\n");
+            mutex_lock(&mutexlock);
             ret = kfifo_out(&test, buf, sizeof(buf));
+            mutex_unlock(&mutexlock);
             buf[ret] = '\0';
             printk(KERN_INFO "%.*s\n", ret, buf);
             printk(KERN_INFO "test passed\n");
 
         }
-        
-        // ssleep(5);
     }
 
     printk(KERN_INFO "First Thread Stopping\n");
@@ -100,12 +101,6 @@ static int __init init_thread(void)
     else
         printk(KERN_INFO "Thread 2 creation failed\n");
 
-    // rc= pthread_mutex_init(&mutexlock,&mutexattr);
-    // if(rc!=0)
-    // {
-    //   perror("MUTEX ERROR ");
-    // }
-
     return 0;
 }
 // Module Exit
@@ -123,8 +118,6 @@ static void __exit cleanup_thread(void)
        printk(KERN_INFO "Thread 2 stopped");
    }
 
-   // pthread_mutex_t mutexlock;
-   // pthread_mutexattr_t mutexattr;
 }
 
 module_init(init_thread);

@@ -23,7 +23,9 @@ __attribute__((section("__versions"))) = {
 	{ 0xca2e829b, __VMLINUX_SYMBOL_STR(kthread_create_on_node) },
 	{ 0x33fcf44a, __VMLINUX_SYMBOL_STR(__kfifo_out_r) },
 	{ 0xf9a482f9, __VMLINUX_SYMBOL_STR(msleep) },
+	{ 0x27cfea5a, __VMLINUX_SYMBOL_STR(mutex_unlock) },
 	{ 0x3955fcf6, __VMLINUX_SYMBOL_STR(__kfifo_in_r) },
+	{ 0xb4328ac4, __VMLINUX_SYMBOL_STR(mutex_lock) },
 	{ 0x91715312, __VMLINUX_SYMBOL_STR(sprintf) },
 	{ 0x952664c5, __VMLINUX_SYMBOL_STR(do_exit) },
 	{ 0xb3f7646e, __VMLINUX_SYMBOL_STR(kthread_should_stop) },
@@ -38,4 +40,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "777923FD918FEB8E8FD06C9");
+MODULE_INFO(srcversion, "45C4880960A1FD6CE7D7E0E");
