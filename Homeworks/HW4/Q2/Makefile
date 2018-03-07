@@ -5,7 +5,7 @@ OBJS =
 
 all: q2 
 
-pgm1:
+q2: q2.c
 	$(CC) -o q2 q2.c -pthread -lrt $(CFLAGS) $(LIBS)
 
 clean:

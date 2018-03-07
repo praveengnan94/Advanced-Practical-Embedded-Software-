@@ -1,23 +1,31 @@
-// #include "q2.h"
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 03/06/2018
+* DESCRIPTION  : This program explores various IPC mechanisms to communicate in Linux
+* HEADER FILES  : q2.h
+****************************************************************/
 #include "q2sock.c"
-
-int main(){
-
-    /*linux has Half duplex setting, thus file_descriptor[0] is always used for reading,file_descriptor[1] always used for writing*/
-    msg_struct child_message[1];
-    strcpy(child_message->message,"Hello from Child");
-    child_message->led_status = 0;
-
-    msg_struct parent_message[1];
-    strcpy(parent_message->message,"Hello from Parent");
-    parent_message->led_status = 1;
-
-    msg_struct* message_buf = (msg_struct*)malloc(sizeof(msg_struct));
-    if(message_buf==NULL) {printf("malloc Error: %s\n", strerror(errno)); return -1;}
+#include "q2pipes.c"
+#include "q2msgq.c"
+#include "q2sharedmem.c"
 
 
-    sock(child_message,parent_message,message_buf);
+int main(int argc, char *argv[])
+{
 
-    // free(message_buf);
+    if(strcmp(argv[1],"pipes")==0)
+        pipes();
+    else if(strcmp(argv[1],"sock")==0)
+        sock();
+    else if(strcmp(argv[1],"msgq")==0)
+        msgq();
+    else if(strcmp(argv[1],"mem")==0)
+        sharedmem();
+    else
+    {
+        printf("Improper usage\n");
+        exit(1);
+    }    
+    
     return 0;
 }

@@ -10,20 +10,18 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <mqueue.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <sys/un.h>
+#include <netinet/in.h>
 
-#define PRINT_ERR(err) {printf("%s Error: %s\n",err, strerror(errno)); return -1;}
+typedef unsigned char     uint8_t;
+typedef unsigned short    uint16_t;
+typedef unsigned int      uint32_t;
+typedef unsigned long int uint64_t;
 
-#define MY_MQ "/send_receive_mq"
+
+#define MY_MsgQue "/send_receive_mq"
+
+int ret; 
 #define PORT 8080
-#define BUF_SIZE (4096) //max size for atomic read and write
 
-typedef struct {
-        uint8_t led_status;
-        char message[BUF_SIZE - sizeof(uint8_t)];
-} msg_struct;
-
-int ret;
-
+#define ADDRESS     "socket"  /* addr to connect */
