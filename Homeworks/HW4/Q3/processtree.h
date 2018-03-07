@@ -1,4 +1,10 @@
-//https://linuxgazette.net/133/saha.html
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 03/06/2018
+* DESCRIPTION  : This program creates a thread program which creates two threads, and shares thread info using kfifo
+* REFERENCE : https://linuxgazette.net/133/saha.html
+* SOURCE FILES  : processtree.c
+****************************************************************/
 
 #define _GNU_SOURCE
 #include <linux/module.h>
