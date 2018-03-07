@@ -1,36 +1,37 @@
+// https://users.cs.cf.ac.uk/Dave.Marshall/C/node28.html
+
 #include "q2.h"
 
-#define NSTRS       3           /* no. of strings  */
-#define ADDRESS     "mysocket"  /* addr to connect */
+typedef struct {
+        uint8_t led_status;
+        char message[50];
+} msg_struct_sock;
 
-/*
- * Strings we send to the server.
- */
-// char *strs[NSTRS] = {
-//     "This is the first string from the client.\n",
-//     "This is the second string from the client.\n",
-//     "This is the third string from the client.\n"
-// };
-
-msg_struct actual_msg;
-
-void sock(msg_struct child_message[1],msg_struct parent_message[1],msg_struct* message_buf)
+msg_struct_sock actual_msg_sock;
+int done, n;
+char buffer[50];
+#define SOCK_PATH "echo_socket"
+void sock()
 {
-    int sockfd;                    // listening FD
-    int newsockfd;                 // Client connected FD
-    //int addrlen;                   //lenfgth of address
-    int num_char;                  //No. of characters red/written
-    //  char buffer[256];              //data buffer
-    struct sockaddr_in server_addr;//structure containing internet addresss.
-    register int i, s, ns, len;
-    FILE *fp;
-    char c;
-    struct sockaddr_un fsaun;
-    struct sockaddr_un saun;
-    int fromlen;
+    int s, s2, t, len;
+    struct sockaddr_un local, remote;
+    char str[100];
 
-    strcpy(actual_msg.message,"SOMEMEMSSAGE");
-    actual_msg.led_status=1;
+    /*linux has Half duplex setting, thus file_descriptor[0] is always used for reading,file_descriptor[1] always used for writing*/
+    msg_struct_sock child_message[1],child_message_recv[1];
+    strcpy(child_message->message,"LEDON");
+    child_message->led_status = 0;
+
+    msg_struct_sock parent_message[1],parent_message_recv[1];
+    strcpy(parent_message->message,"LEDOFF");
+    parent_message->led_status = 1;
+
+    msg_struct_sock* message_buf = (msg_struct_sock*)malloc(sizeof(msg_struct_sock));
+    if(message_buf==NULL) 
+    {
+        printf("malloc Error: %s\n", strerror(errno)); 
+        exit(1);
+    }
 
     switch(fork()) 
     {
@@ -40,151 +41,100 @@ void sock(msg_struct child_message[1],msg_struct parent_message[1],msg_struct* m
 
     case 0://child process - client
 
-        /*
-         * Get a socket to work with.  This socket will
-         * be in the UNIX domain, and will be a
-         * stream socket.
-         */
-        if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
-            perror("client: socket");
+        if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+            perror("socket");
             exit(1);
         }
 
-        /*
-         * Create the address we will be connecting to.
-         */
-        saun.sun_family = AF_UNIX;
-        strcpy(saun.sun_path, ADDRESS);
+        printf("Trying to connect...\n");
 
-        /*
-         * Try to connect to the address.  For this to
-         * succeed, the server must already have bound
-         * this address, and must have issued a listen()
-         * request.
-         *
-         * The third argument indicates the "length" of
-         * the structure, not just the length of the
-         * socket name.
-         */
-        len = sizeof(saun.sun_family) + strlen(saun.sun_path);
-
-        if (connect(s, &saun, len) < 0) {
-            perror("client: connect");
+        remote.sun_family = AF_UNIX;
+        strcpy(remote.sun_path, SOCK_PATH);
+        len = strlen(remote.sun_path) + sizeof(remote.sun_family);
+        if (connect(s, (struct sockaddr *)&remote, len) == -1) {
+            perror("connect");
             exit(1);
         }
 
-        /*
-         * We'll use stdio for reading
-         * the socket.
-         */
-        fp = fdopen(s, "r");
+        printf("Connected.\n");
 
-        /*
-         * First we read some strings from the server
-         * and print them out.
-         */
-            while ((c = fgetc(fp)) != EOF) {
-                putchar(c);
-
-                // if (c == '\n')
-                //     break;
+        // while(fgets(parent_message_recv, sizeof(parent_message_recv), stdin),!feof(stdin)) 
+        {
+            if (send(s, parent_message, sizeof(parent_message), 0) == -1) {
+                perror("send");
+                exit(1);
             }
 
-        /*
-         * Now we send some strings to the server.
-         */
-        // for (i = 0; i < NSTRS; i++)
-            send(s, &actual_msg, sizeof(actual_msg), 0);
+            n = recv(s, message_buf, sizeof(message_buf), 0);
+            if (n <= 0) {
+                if (n < 0) perror("recv");
+            }
+            printf("PARENT says %s\n",message_buf->message);
 
-        /*
-         * We can simply use close() to terminate the
-         * connection, since we're done with both sides.
-         */
+            if (send(s, "DONE", strlen("DONE"), 0) == -1) {
+                perror("send");
+                exit(1);
+            }
+        }
+
         close(s);
 
         break;
 
     default://parent - server
-
-        /*
-         * Get a socket to work with.  This socket will
-         * be in the UNIX domain, and will be a
-         * stream socket.
-         */
-        if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
-            perror("server: socket");
+        
+        if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+            perror("socket");
             exit(1);
         }
 
-        /*
-         * Create the address we will be binding to.
-         */
-        saun.sun_family = AF_UNIX;
-        strcpy(saun.sun_path, ADDRESS);
-
-        /*
-         * Try to bind the address to the socket.  We
-         * unlink the name first so that the bind won't
-         * fail.
-         *
-         * The third argument indicates the "length" of
-         * the structure, not just the length of the
-         * socket name.
-         */
-        unlink(ADDRESS);
-        len = sizeof(saun.sun_family) + strlen(saun.sun_path);
-
-        if (bind(s, &saun, len) < 0) {
-            perror("server: bind");
+        local.sun_family = AF_UNIX;
+        strcpy(local.sun_path, SOCK_PATH);
+        unlink(local.sun_path);
+        len = strlen(local.sun_path) + sizeof(local.sun_family);
+        if (bind(s, (struct sockaddr *)&local, len) == -1) {
+            perror("bind");
             exit(1);
         }
 
-        /*
-         * Listen on the socket.
-         */
-        if (listen(s, 5) < 0) {
-            perror("server: listen");
+        if (listen(s, 5) == -1) {
+            perror("listen");
             exit(1);
         }
 
-        /*
-         * Accept connections.  When we accept one, ns
-         * will be connected to the client.  fsaun will
-         * contain the address of the client.
-         */
-        if ((ns = accept(s, &fsaun, &fromlen)) < 0) {
-            perror("server: accept");
-            exit(1);
-        }
-
-        /*
-         * We'll use stdio for reading the socket.
-         */
-        fp = fdopen(ns, "r");
-
-        /*
-         * First we send some strings to the client.
-         */
-        // for (i = 0; i < NSTRS; i++)
-            send(ns, &actual_msg, sizeof(actual_msg), 0);
-
-        /*
-         * Then we read some strings from the client and
-         * print them out.
-         */
-            while ((c = fgetc(fp)) != EOF) {
-                putchar(c);
-
-                // if (c == '\n')
-                //     break;
+        for(;;) {
+            printf("Waiting for a connection...\n");
+            t = sizeof(remote);
+            if ((s2 = accept(s, (struct sockaddr *)&remote, &t)) == -1) {
+                perror("accept");
+                exit(1);
             }
 
-        /*
-         * We can simply use close() to terminate the
-         * connection, since we're done with both sides.
-         */
-        close(s);
+            printf("Connected.\n");
 
+            // done = 0;
+            // do {
+
+            n = recv(s2, message_buf, sizeof(message_buf), 0);
+            if (n <= 0) {
+                if (n < 0) perror("recv");
+            }
+            printf("CHILD says %s\n",message_buf->message);
+
+            if (send(s2, child_message, sizeof(child_message), 0) < 0) {
+                perror("send");
+                done = 1;
+            }
+
+            n = recv(s2, str, sizeof(str), 0);
+            if (n <= 0) {
+                if (n < 0) perror("recv");
+            }
+
+            // } while (!done);
+
+            close(s2);
+        }
         break;
     }
 }
