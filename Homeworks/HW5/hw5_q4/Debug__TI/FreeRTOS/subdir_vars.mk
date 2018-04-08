@@ -1,0 +1,56 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+SHELL = cmd.exe
+
+# Add inputs and outputs from these tool invocations to the build variables 
+C_SRCS += \
+../FreeRTOS/event_groups.c \
+../FreeRTOS/heap_2.c \
+../FreeRTOS/list.c \
+../FreeRTOS/queue.c \
+../FreeRTOS/tasks.c \
+../FreeRTOS/timers.c 
+
+C_DEPS += \
+./FreeRTOS/event_groups.d \
+./FreeRTOS/heap_2.d \
+./FreeRTOS/list.d \
+./FreeRTOS/queue.d \
+./FreeRTOS/tasks.d \
+./FreeRTOS/timers.d 
+
+OBJS += \
+./FreeRTOS/event_groups.obj \
+./FreeRTOS/heap_2.obj \
+./FreeRTOS/list.obj \
+./FreeRTOS/queue.obj \
+./FreeRTOS/tasks.obj \
+./FreeRTOS/timers.obj 
+
+OBJS__QUOTED += \
+"FreeRTOS\event_groups.obj" \
+"FreeRTOS\heap_2.obj" \
+"FreeRTOS\list.obj" \
+"FreeRTOS\queue.obj" \
+"FreeRTOS\tasks.obj" \
+"FreeRTOS\timers.obj" 
+
+C_DEPS__QUOTED += \
+"FreeRTOS\event_groups.d" \
+"FreeRTOS\heap_2.d" \
+"FreeRTOS\list.d" \
+"FreeRTOS\queue.d" \
+"FreeRTOS\tasks.d" \
+"FreeRTOS\timers.d" 
+
+C_SRCS__QUOTED += \
+"../FreeRTOS/event_groups.c" \
+"../FreeRTOS/heap_2.c" \
+"../FreeRTOS/list.c" \
+"../FreeRTOS/queue.c" \
+"../FreeRTOS/tasks.c" \
+"../FreeRTOS/timers.c" 
+
+
