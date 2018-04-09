@@ -1,46 +1,16 @@
-#include <FreeRTOS.h>
-#include <task.h>
-#include <timers.h>
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/06/2018
+* DESCRIPTION  : EVENT DRIVEN UI
+* HEADER FILES  : main.h
+****************************************************************/
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "inc/hw_ints.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/debug.h"
-#include "driverlib/gpio.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/uart.h"
-#include "utils/uartstdio.h"
-#include "queue.h"
-#include "timer.h"
-#include "utilities/rom.h"
+#include "main.h"
 
-TimerHandle_t MyTimer;
-#define TIMER_TIME pdMS_TO_TICKS(250)                //250ms
-#define LED_ITEM_SIZE           sizeof(uint32_t)
-#define LED_QUEUE_SIZE         40
 
-#define TOGGLE_LED 0x01
-#define LOG_STRING 0x02
-
-long int count1,count2;
-uint32_t g_ui32SysClock,i8Message1,i8Message2,i8Message;
-
-xQueueHandle g_pTASK1Queue;
-xQueueHandle g_pTASK2Queue;
-xQueueHandle g_pTASK3Queue;
-
-TaskHandle_t handle1,handle2,handle3;
-
-int count;
 //*****************************************************************************
 //
-// This task toggles the user selected LED at a user selected frequency. User
-// can make the selections by pressing the left and right buttons.
+// This task sends notifications to Task 3 at 2Hz for LED TOGGLE.
 //
 //*****************************************************************************
 static void
@@ -54,11 +24,16 @@ Task1(void *pvParameters)
         if(xQueueReceive(g_pTASK1Queue, &i8Message1, 0) == pdPASS)
         {
             xTaskNotify(handle3,TOGGLE_LED,eSetBits);
-//            UARTprintf("T3 notified from T1\n");
+            UARTprintf("T1 -> T3\n");
         }
     }
 }
 
+//*****************************************************************************
+//
+// This task sends notifications to Task 3 at 4Hz for LOG_MESSAGE.
+//
+//*****************************************************************************
 static void
 Task2(void *pvParameters)
 {
@@ -75,12 +50,17 @@ Task2(void *pvParameters)
         {
             xQueueSendFromISR(g_pTASK3Queue,&ticks,0);
             xTaskNotify(handle3,LOG_STRING,eSetBits);
-//            UARTprintf("T3 notified from T2\n");
+            UARTprintf("T2 -> T3\n");
 
         }
     }
 }
 
+//*****************************************************************************
+//
+// This task receives notifications from Task 1 and 2 and performs the actions.
+//
+//*****************************************************************************
 static void
 Task3(void *pvParameters)
 {
@@ -119,24 +99,25 @@ uint32_t receivesig;
     }
 }
 
+//*****************************************************************************
+//
+// Timer Interrupt Handler at 4Hz
+//
+//*****************************************************************************
 void Timer0IntHandler(TimerHandle_t xTimer)
 {
-      /* Increment the count, then test to see if the timer has expired
-      ulMaxExpiryCountBeforeStopping yet. */
 //    UARTprintf("TIMERRRR INTER\n");
       count++;
       if(count%2==0){
-//           UARTprintf("INTR T2 : %d\n\r",count);
-           xQueueSendFromISR(g_pTASK2Queue,&i8Message1,0);
+          xQueueSendFromISR(g_pTASK1Queue,&i8Message2,0);
          }
+      xQueueSendFromISR(g_pTASK2Queue,&i8Message1,0);
 
-//      UARTprintf("INTR T1 : %d\n\r",count);
-    xQueueSendFromISR(g_pTASK1Queue,&i8Message2,0);
 }
 
 //*****************************************************************************
 //
-// Initializes the LED task.
+// Initializes the Task1.
 //
 //*****************************************************************************
 uint32_t
@@ -147,7 +128,7 @@ Task1Init(void)
         // Create a queue for sending messages to the LED task.
         //
         g_pTASK1Queue = xQueueCreate(LED_QUEUE_SIZE, LED_ITEM_SIZE);
-    if(pdTRUE!=xTaskCreate(Task1,"Task1",32,NULL,2,&handle1))
+    if(pdTRUE!=xTaskCreate(Task1,"Task1",32,NULL,1,&handle1))
         {
         while(1);
 
@@ -158,6 +139,12 @@ Task1Init(void)
     //
     return(0);
 }
+
+//*****************************************************************************
+//
+// Initializes the Task2.
+//
+//*****************************************************************************
 uint32_t
 Task2Init(void)
 {
@@ -166,7 +153,7 @@ Task2Init(void)
         // Create a queue for sending messages to the LED task.
         //
         g_pTASK2Queue = xQueueCreate(LED_QUEUE_SIZE, LED_ITEM_SIZE);
-    if(pdTRUE!=xTaskCreate(Task2,"Task2",32,NULL,2,&handle2))
+    if(pdTRUE!=xTaskCreate(Task2,"Task2",32,NULL,1,&handle2))
         {
         while(1);
         }
@@ -177,6 +164,12 @@ Task2Init(void)
     return(0);
 }
 
+
+//*****************************************************************************
+//
+// Initializes the Task3.
+//
+//*****************************************************************************
 uint32_t
 Task3Init(void)
 {
@@ -185,7 +178,7 @@ Task3Init(void)
         // Create a queue for sending messages to the LED task.
         //
         g_pTASK3Queue = xQueueCreate(LED_QUEUE_SIZE, LED_ITEM_SIZE);
-    if(pdTRUE!=xTaskCreate(Task3,"Task3",32,NULL,3,&handle3))
+    if(pdTRUE!=xTaskCreate(Task3,"Task3",32,NULL,1,&handle3))
         {
         while(1);
         }
@@ -221,13 +214,13 @@ void ConfigureUART(void)
      ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
      ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
      //
-        // Set GPIO A0 and A1 as UART pins.
-        //
-        GPIOPinConfigure(GPIO_PA0_U0RX);
-        GPIOPinConfigure(GPIO_PA1_U0TX);
-        ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    // Set GPIO A0 and A1 as UART pins.
+    //
+    GPIOPinConfigure(GPIO_PA0_U0RX);
+    GPIOPinConfigure(GPIO_PA1_U0TX);
+    ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
-        UARTStdioConfig(0,115200,g_ui32SysClock);
+    UARTStdioConfig(0,115200,g_ui32SysClock);
 }
 int count=0;
 

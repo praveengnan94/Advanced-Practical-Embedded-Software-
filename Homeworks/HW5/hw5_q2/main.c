@@ -1,24 +1,11 @@
-#include <stdint.h>
-#include <stdbool.h>
-#include "inc/hw_ints.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/debug.h"
-#include "driverlib/gpio.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/uart.h"
-#include "utils/uartstdio.h"
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/06/2018
+* DESCRIPTION  : DriverLib
+* HEADER FILES  : main.h
+****************************************************************/
 
-#define TIME_VALUE (SysCtlClockGet()/3)*8.33 // 16.66- 1Hz for 120MHz clock. So 8.33 for 2Hz
-//
-// System clock rate in Hz.
-//
-//****************************************************************************
-uint32_t g_ui32SysClock;
-
+#include "main.h"
 
 //*****************************************************************************
 //
@@ -77,10 +64,13 @@ int main(void)
               UARTStdioConfig(0,115200,g_ui32SysClock);
               SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN);
 
+              //Poll and blink LED and print UART messages
               while(1)
               {
-                  ROM_SysCtlDelay(TIME_VALUE);
+                  count++;
+                  ROM_SysCtlDelay(TIME_VALUE); //Calculations for delay in the macro
                   GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, GPIO_PIN_0);
+                  UARTprintf("Project for:PRAVEEN_GNANASEKARAN 04/08/2018 LED COUNT : %d\n",count);
                   ROM_SysCtlDelay(TIME_VALUE);
                   GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_0, 0x0);
               }

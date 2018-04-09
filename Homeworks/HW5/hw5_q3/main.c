@@ -1,46 +1,20 @@
-#include <FreeRTOS.h>
-#include <task.h>
-#include <timers.h>
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/06/2018
+* DESCRIPTION  : FreeRTOS
+* HEADER FILES  : main.h
+****************************************************************/
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "inc/hw_ints.h"
-#include "inc/hw_memmap.h"
-#include "driverlib/debug.h"
-#include "driverlib/gpio.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/uart.h"
-#include "utils/uartstdio.h"
-#include "queue.h"
-#include "timer.h"
-#include "utilities/rom.h"
-TimerHandle_t MyTimer;
-#define TIMER_TIME pdMS_TO_TICKS(250)                //10ms
-#define LED_ITEM_SIZE           sizeof(uint32_t)
-#define LED_QUEUE_SIZE         40
+#include "main.h"
 
-long int count1,count2;
-uint32_t g_ui32SysClock,i8Message1,i8Message2,i8Message;
-
-xQueueHandle g_pTASK1Queue;
-xQueueHandle g_pTASK2Queue;
-
-int count;
 //*****************************************************************************
 //
-// This task toggles the user selected LED at a user selected frequency. User
-// can make the selections by pressing the left and right buttons.
+// This task TOGGLES LED at 4Hz.
 //
 //*****************************************************************************
 static void
 Task1(void *pvParameters)
 {
-
-
     //
     // Loop forever.
     //
@@ -52,7 +26,7 @@ Task1(void *pvParameters)
         if(xQueueReceive(g_pTASK1Queue, &i8Message1, 0) == pdPASS)
         {
 
-          UARTprintf("T1 START\n\r");
+          UARTprintf("Task1 LED\n");
           count1++;
           if(count1%2==0)
              {
@@ -70,11 +44,14 @@ Task1(void *pvParameters)
     }
 }
 
+//*****************************************************************************
+//
+// This task TOGGLES LED at 2Hz.
+//
+//*****************************************************************************
 static void
 Task2(void *pvParameters)
 {
-
-
     //
     // Loop forever.
     //
@@ -86,41 +63,47 @@ Task2(void *pvParameters)
         if(xQueueReceive(g_pTASK2Queue, &i8Message2, 0) == pdPASS)
         {
 
-          UARTprintf("T2 START\n\r");
+          UARTprintf("Task 2 LED\n");
           count2++;
           if(count2%2==0)
            {
-              // Turn on the LED.
+             // Turn on the LED.
              //
              GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_1, GPIO_PIN_1);
            }
            else
            {
-               // Turn off the LED.
-               //
-              GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_1, 0x0);
+             // Turn off the LED.
+             //
+             GPIOPinWrite(GPIO_PORTN_BASE, GPIO_PIN_1, 0x0);
            }
         }
     }
 }
 
+//*****************************************************************************
+//
+// Timer interrupt at 4 Hz to notify tasks 1 and 2
+//
+//*****************************************************************************
 void Timer0IntHandler(TimerHandle_t xTimer)
 {
       /* Increment the count, then test to see if the timer has expired
       ulMaxExpiryCountBeforeStopping yet. */
       count++;
-      if(count%2==0){
-           UARTprintf("INTR T2 : %d\n\r",count);
-           xQueueSendFromISR(g_pTASK2Queue,&i8Message1,0);
-         }
+      if(count%2==0)//2 Hz
+      {
+//           UARTprintf("INTR T2 : %d\n\r",count);
+          xQueueSendFromISR(g_pTASK2Queue,&i8Message1,0);
+      }
 
-      UARTprintf("INTR T1 : %d\n\r",count);
-    xQueueSendFromISR(g_pTASK1Queue,&i8Message2,0);
+//      UARTprintf("INTR T1 : %d\n\r",count);
+    xQueueSendFromISR(g_pTASK1Queue,&i8Message2,0); //4Hz
 }
 
 //*****************************************************************************
 //
-// Initializes the LED task.
+// Initializes the task 1.
 //
 //*****************************************************************************
 uint32_t
@@ -142,6 +125,12 @@ Task1Init(void)
     //
     return(0);
 }
+
+//*****************************************************************************
+//
+// Initializes the task 2.
+//
+//*****************************************************************************
 uint32_t
 Task2Init(void)
 {

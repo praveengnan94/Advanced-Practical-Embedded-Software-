@@ -1,6 +1,7 @@
 # FIXED
 
 main.obj: ../main.c
+main.obj: ../main.h
 main.obj: C:/Users/pgnanasekaran/Desktop/FreeRTOSv10.0.1/FreeRTOS/Source/include/FreeRTOS.h
 main.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.1.LTS/include/stddef.h
 main.obj: C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.1.LTS/include/stdint.h
@@ -37,6 +38,7 @@ main.obj: C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/timer.h
 main.obj: ../utilities/rom.h
 
 ../main.c: 
+../main.h: 
 C:/Users/pgnanasekaran/Desktop/FreeRTOSv10.0.1/FreeRTOS/Source/include/FreeRTOS.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.1.LTS/include/stddef.h: 
 C:/ti/ccsv8/tools/compiler/ti-cgt-arm_18.1.1.LTS/include/stdint.h: 
