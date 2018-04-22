@@ -45,38 +45,50 @@ void *MagnetoTask(void *pthread_inf) {
   magn_CONFIG_write(magn,buffer);
   magn_CONFIG_read(magn,buffer);
 
-// while(1)
-// {
-//   uint8_t* temp;
-//   uint8_t mxl,myl,mzl;
-//   uint8_t mxh,myh,mzh;
-//   uint8_t mx,my,mz;
+while(1)
+{
+  uint8_t* temp;
+  uint8_t mxl,myl,mzl;
+  uint8_t mxh,myh,mzh;
+  uint8_t mx,my,mz;
 
-//   buffer[0]=OUT_X_L_M;
-//   mxl=magn_VALUE_read(magn,buffer);
+  buffer[0]=OUT_X_L_M;
+  mxl=magn_VALUE_read(magn,buffer);
 
-//   buffer[0]=OUT_X_H_M;
-//   mxh=magn_VALUE_read(magn,buffer);
-//   mx=mxh<<8|mxl;
-//   printf("%d,",mx);
+  buffer[0]=OUT_X_H_M;
+  mxh=magn_VALUE_read(magn,buffer);
+  mx=mxh<<8|mxl;
+  // printf("%d,",mx);
 
-//   buffer[0]=OUT_Y_L_M;
-//   myl=magn_VALUE_read(magn,buffer);
+  buffer[0]=OUT_Y_L_M;
+  myl=magn_VALUE_read(magn,buffer);
 
-//   buffer[0]=OUT_Y_H_M;
-//   myh=magn_VALUE_read(magn,buffer);
-//   my=myh<<8|myl;
-//   printf(" %d,",my);
+  buffer[0]=OUT_Y_H_M;
+  myh=magn_VALUE_read(magn,buffer);
+  my=myh<<8|myl;
+  // printf(" %d,",my);
 
-//   buffer[0]=OUT_Z_L_M;
-//   mzl=magn_VALUE_read(magn,buffer);
+  buffer[0]=OUT_Z_L_M;
+  mzl=magn_VALUE_read(magn,buffer);
 
-//   buffer[0]=OUT_Z_H_M;
-//   mzh=magn_VALUE_read(magn,buffer);
-//   mz=mzh<<8|mzl;
-//   printf(" %d\n",mz);
+  buffer[0]=OUT_Z_H_M;
+  mzh=magn_VALUE_read(magn,buffer);
+  mz=mzh<<8|mzl;
+  // printf(" %d\n",mz);
+	
+	
 
-// }
+	threadTaskAttr *pthread_info = (threadTaskAttr *)pthread_inf;
+   while (magneto_flag_glb == 0) 
+    {
+      pthread_cond_wait(&cond_var_magneto, &lock_magneto);
+    }
+
+    magneto_flag_glb = 0;
+    pthread_kill(pthread_info->main, MAGNETO_SIG_HEARTBEAT);
+
+
+}
  //  uint8_t mx,my,mz;
   
 	// mx = (temp[1] << 8) | temp[0]; // Store x-axis values into mx
@@ -84,19 +96,4 @@ void *MagnetoTask(void *pthread_inf) {
 	// mz = (temp[5] << 8) | temp[4]; // Store z-axis values into mz
 	// printf("%x %x %x\n",mx,my,mz);
 
-
-
- //  ret = Temp_init_timer(); 
-
- //  if (ret == -1) 
- //  {
-    initialize = 0;
- //    sprintf(&(initialize_msg[1][0]), "Failure Temptask Temp_init_timer \n");
- //  } 
- //  else 
- //  {
- //    sprintf(&(initialize_msg[1][0]), "Success Temptask Temp_init_timer \n");
- //  }
-
-	// printf("Magneto!!!!\n");
 }

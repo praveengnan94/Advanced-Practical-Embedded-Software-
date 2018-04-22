@@ -8,11 +8,10 @@
 #include <string.h>
 #include "threads.h"
 
-int accel_init_timer(){
+int init_timer(){
     int ret;
 
-    struct sigaction sig_act ={.sa_flags = SA_RESTART,.sa_handler = accel_sig_handler};
-    printf("ACCEL TIMER\n");
+    struct sigaction sig_act ={.sa_flags = SA_RESTART,.sa_handler = timer_sig_handler};
     ret = sigaction(ACCEL_SIGNAL_OPT,&sig_act,NULL);
     if(ret == -1) 
         return -1;
@@ -36,11 +35,16 @@ int accel_init_timer(){
 }
 
 
-void accel_sig_handler(int sig){
-    printf("ACCEL SIG HANDLER\n");
+void timer_sig_handler(int sig){
+    // printf("ACCEL SIG HANDLER\n");
     // pthread_mutex_lock(&lock_accel);
     accel_flag_glb = 1;
+    magneto_flag_glb = 1;
+    logger_flag_glb = 1;
     pthread_cond_signal(&cond_var_accel);
+    pthread_cond_signal(&cond_var_magneto);
+    pthread_cond_signal(&cond_var_logger);
+
     // pthread_mutex_unlock(&lock_accel);
 
 }

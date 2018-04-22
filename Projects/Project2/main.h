@@ -12,6 +12,7 @@
 #include "AccelTask.c"
 #include "MagnetoTask.c"
 #include "LoggerTask.c"
+#include "CommTask.c"
 
 
 #define UNITERRUPTIBLE_SLEEP(t)                                                               \
@@ -31,6 +32,7 @@ char* fileid;
 uint8_t accel_exit_flag = 0;
 uint8_t magneto_exit_flag = 0;
 uint8_t logger_exit_flag = 0;
+uint8_t comm_exit_flag = 0;
 
 int ret; 
 
@@ -43,5 +45,6 @@ void logger_heartbeat_handl(int sig) ;
 sig_atomic_t accel_heartbeat_flag;
 sig_atomic_t logger_heartbeat_flag;
 sig_atomic_t magneto_heartbeat_flag;
+sig_atomic_t comm_heartbeat_flag;
 
 
