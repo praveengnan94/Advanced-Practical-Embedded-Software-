@@ -13,7 +13,6 @@
 #include "MagnetoTask.c"
 #include "LoggerTask.c"
 
-#define DEFAULT_FILE_NAME ("logfile.txt")
 
 #define UNITERRUPTIBLE_SLEEP(t)                                                               \
   struct timespec current, remaining;                                          \
@@ -33,12 +32,16 @@ uint8_t accel_exit_flag = 0;
 uint8_t magneto_exit_flag = 0;
 uint8_t logger_exit_flag = 0;
 
-sig_atomic_t accel_heartbeat_flag;
-sig_atomic_t logger_heartbeat_flag;
-sig_atomic_t magneto_heartbeat_flag;
+int ret; 
 
-void accel_hearbeat_handl(int sig) ;
+void accel_heartbeat_handl(int sig) ;
 
 void magneto_heartbeat_handl(int sig) ;
 
 void logger_heartbeat_handl(int sig) ;
+
+sig_atomic_t accel_heartbeat_flag;
+sig_atomic_t logger_heartbeat_flag;
+sig_atomic_t magneto_heartbeat_flag;
+
+

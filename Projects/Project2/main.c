@@ -20,6 +20,29 @@ int main(int argc, char *argv[]) {
   }
   
   // printf("LOGFILE name %s\n", fileid);
+  accel_close_flag = 1;
+  accel_heartbeat_flag=0;
+
+  sigset_t mask_bit, all_signals_mask; // set of signals
+  
+  sigfillset(&all_signals_mask);
+  
+  ret =pthread_sigmask(SIG_SETMASK, &all_signals_mask, NULL); 
+
+  if (ret == -1) 
+  {
+    perror("MASKING ERROR");
+    return -1;
+  }
+
+  struct sigaction sigactn;
+  sigemptyset(&sigactn.sa_mask);
+  sigactn.sa_handler = accel_heartbeat_handl;
+  ret = sigaction(ACCEL_SIG_HEARTBEAT, &sigactn, NULL);
+  if (ret == -1) {
+    perror("SIGACTION ERROR");
+    return -1;
+  }
 
   int ret;
 
@@ -55,17 +78,21 @@ int main(int argc, char *argv[]) {
   UNITERRUPTIBLE_SLEEP(1); // allow other threads to initialize
 
 
-  // ret =pthread_sigmask(SIG_SETMASK, &mask_bit, NULL); // if non NULL prev val of signal mask_bit stored here
-  // if (ret == -1) {
-  //   printf("Main pthread_sigmask:%s\n", strerror(errno));
-  //   return -1;
-  // }
-  // char killoption;
+  ret =pthread_sigmask(SIG_SETMASK, &mask_bit, NULL); // if non NULL prev val of signal mask_bit stored here
+  if (ret == -1) {
+    printf("Main pthread_sigmask:%s\n", strerror(errno));
+    return -1;
+  }
+  char killoption;
 
-  while (1) {
+  sigaddset(&mask_bit, ACCEL_SIGNAL_OPT);
+  // signal(SIGINT, SIGNAL_INTERRUPT_HANDL);
+
+  while (1) 
+  {
 
     // check HB signals every 5 seconds for 5 tasks
-    UNITERRUPTIBLE_SLEEP(5);
+    UNITERRUPTIBLE_SLEEP(1);
 
     if (accel_exit_flag == 0) {
       if (accel_heartbeat_flag == 0)

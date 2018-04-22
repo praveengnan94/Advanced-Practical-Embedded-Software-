@@ -31,7 +31,7 @@ sig_atomic_t accel_close_flag;
 void SIGNAL_INTERRUPT_HANDL(int sig);
 
 int accel_init_timer();
-
+void SIGNAL_INTERRUPT_HANDL(int sig);
 int timer_init_light();
 
 void accel_sig_handler(int sig);
