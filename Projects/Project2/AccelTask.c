@@ -33,14 +33,14 @@ void *AccelTask(void *pthread_inf) {
 	    accel_flag_glb = 0;
 	    pthread_kill(pthread_info->main, ACCEL_SIG_HEARTBEAT);
 
-	     len_bytes = mq_send(msg_queue, "SOMEBODY", strlen("SOMEBODY"), (unsigned int *)MESSAGE_PRIORITY);
+	     len_bytes = mq_send(msg_queue, "ACCELEROMETER DATA", strlen("ACCELEROMETER DATA"), (unsigned int )MESSAGE_PRIORITY);
 		        if(len_bytes < 0) 
 			{
 				printf("ERROR: child_to_parent message sending fail\n"); 
 				return 0;
 			}
-		        else 
-				printf("SENT: message from child to parent\n");
+		        else {}
+				// printf("SENT: message from child to parent\n");
 
 	}
 }
