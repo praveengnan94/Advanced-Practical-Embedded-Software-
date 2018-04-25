@@ -1,13 +1,13 @@
-main.elf:main.c  i2c_wrap.o lsm9ds1.o notify.o
+main.elf:main.c  i2c_wrap.o lsm9ds1.o notify.o 
 	gcc -g -o $@ $^ -lpthread -lrt -lm
 
 i2c_wrap.o: i2c_wrap.c
 	gcc -c -o $@ $<
 
-AccelTask.o:AccelTask.c includes.h
+AccelTask.o:AccelTask.c includes.h 
 	gcc -c -o $@ $<  -lpthread -lrt
 
-MagnetoTask.o:MagnetoTask.c includes.h
+MagnetoTask.o:MagnetoTask.c  includes.h 
 	gcc -c -o $@ $<  -lpthread -lrt
 
 LoggerTask.o:LoggerTask.c includes.h
