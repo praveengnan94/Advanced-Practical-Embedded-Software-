@@ -68,13 +68,11 @@ void *MagnetoTask(void *pthread_inf) {
 
   if (ret == -1) 
   {
-    printf("FAIL\n");
     initialize = 0;
     sprintf(&(initialize_msg[1][0]), "Failure Temptask init_timer \n");
   } 
   else 
   {
-    printf("SUCCESS\n");
     sprintf(&(initialize_msg[1][0]), "Success Temptask init_timer \n");
   }
 
@@ -176,6 +174,21 @@ If D is between 0 degrees and 67.5 degrees – North-East*/
   //   printf("SOUTH\n");
   // else if((dir>67.5)||(dir<67.5))
   //   printf("EAST\n");
+    data_cel=69;
+    logger_pckt magneto_log = {.log_level = 1, .log_source = magneto_Task};
+    sprintf(data_cel_str, "MAGNETO %f", data_cel);
+    strcpy(magneto_log.log_msg, data_cel_str);
+
+
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    strcpy(magneto_log.time_stamp, asctime(tm));
+    clock_gettime(CLOCK_MONOTONIC, &current);
+    expire.tv_sec = current.tv_sec + 2;
+    expire.tv_nsec = current.tv_nsec;
+    // num_bytes = mq_timedsend(msg_queue, (const char *)&magneto_log,sizeof(logger_pckt), MESSAGE_PRIORITY, &expire);
+
+
 
 	threadTaskAttr *pthread_info = (threadTaskAttr *)pthread_inf;
    while (magneto_flag_glb == 0) 
@@ -185,8 +198,8 @@ If D is between 0 degrees and 67.5 degrees – North-East*/
 
     magneto_flag_glb = 0;
     pthread_kill(pthread_info->main, MAGNETO_SIG_HEARTBEAT);
-
-    len_bytes = mq_send(msg_queue, "MAGNETOMETER DATA", strlen("MAGNETOMETER DATA"), (unsigned int )MESSAGE_PRIORITY);
+    printf("SENDING TIME: %s  LEVEL: %d SOURCE: %d MESSAGE: %s\n\n", magneto_log.time_stamp,magneto_log.log_level, (&magneto_log)->log_source,(&magneto_log)->log_msg);
+    len_bytes = mq_send(msg_queue,(const char *)&magneto_log,sizeof(logger_pckt), (unsigned int )MESSAGE_PRIORITY);
 		        if(len_bytes < 0) 
 			{
 				printf("ERROR: child_to_parent message sending fail\n"); 

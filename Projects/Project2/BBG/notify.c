@@ -39,7 +39,7 @@ void magneto_timer_sig_handler(int sig){
     // pthread_mutex_lock(&lock_magneto);
     magneto_flag_glb = 1;
 
-    printf("TIMERRRsiggg\n");
+    // printf("TIMERRRsiggg\n");
     pthread_cond_signal(&cond_var_magneto);    
 
     // pthread_mutex_unlock(&lock_magneto);

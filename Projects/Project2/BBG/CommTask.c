@@ -2,5 +2,12 @@
 
 void *CommTask(void *pthread_inf) {
 
-	printf("COMM!!!!\n");
+	int ret;
+	// uartinit();
+	// uartstructre *uartstructnew;
+	
+	// while(1)
+	// {
+	// 	ret=uartRead(uartstructnew);
+	// }
 }

@@ -11,4 +11,8 @@
 #include "msgque.h"
 #include <math.h>
 #include "threads.h"
-// #include "notify.h"
+#include "loggerstructs.h"
+
+struct timespec current, expire;
+int num_bytes;
+char data_cel_str[BUFFER_SIZE - 200];

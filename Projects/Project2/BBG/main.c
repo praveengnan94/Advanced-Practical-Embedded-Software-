@@ -66,16 +66,6 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  // UNITERRUPTIBLE_SLEEP(1); // allow other threads to initialize
-  // sigaddset(&mask_bit, MAGNETO_SIGNAL_OPT);
-
-  // ret =pthread_sigmask(SIG_SETMASK, &mask_bit, NULL); // if non NULL prev val of signal mask_bit stored here
-  // if (ret == -1) {
-  //   printf("Main pthread_sigmask:%s\n", strerror(errno));
-  //   return -1;
-  // }
-  // char killoption;
-
   while (1) 
   {
 

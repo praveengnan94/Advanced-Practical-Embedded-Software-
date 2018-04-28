@@ -22,20 +22,18 @@ void *LoggerTask(void *pthread_inf) {
 			}
 			
 	threadTaskAttr *pthread_info = (threadTaskAttr *)pthread_inf;
-
-		
+	logger_pckt *log = (logger_pckt *)malloc(sizeof(logger_pckt));
+  char *fileid="logfile.txt";
+  FILE *pfd = fopen(fileid, "w");
+  if (pfd == NULL) 
+  {
+    perror("Log Task fopen ERROR");
+  } 
+  else{}
 	 
 	while(1)
 	{
-	   // while (logger_flag_glb == 0) 
-	   //  {
-	   //    pthread_cond_wait(&cond_var_logger, &lock_logger);
-	   //  }
-
-	   //  logger_flag_glb = 0;
-	   //  pthread_kill(pthread_info->main, LOGGER_SIG_HEARTBEAT);
-
-	    len_bytes = mq_receive(msg_queue, (char*)buffer, BUFFER_SIZE, &priority);
+	    len_bytes = mq_receive(msg_queue, (char *)log, BUFFER_SIZE, &priority);
 
 	        if(len_bytes < 0) 
 			{
@@ -45,7 +43,8 @@ void *LoggerTask(void *pthread_inf) {
 
 		        else 
 			{
-				printf("RECEIVED %s\n",buffer);
+				fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: %d MESSAGE: %s\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level, ((logger_pckt *)log)->log_source,((logger_pckt *)log)->log_msg);
+        		fflush(pfd);
 	        }
 
 	}
