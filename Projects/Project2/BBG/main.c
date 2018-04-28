@@ -24,18 +24,6 @@ int main(int argc, char *argv[]) {
   magneto_close_flag=1;
   magneto_heartbeat_flag=0;
 
-  // sigset_t mask_bit, all_signals_mask; // set of signals
-  
-  // sigfillset(&all_signals_mask);
-  
-  // ret =pthread_sigmask(SIG_SETMASK, &all_signals_mask, NULL); 
-
-  // if (ret == -1) 
-  // {
-  //   perror("MASKING ERROR");
-  //   return -1;
-  // }
-
   struct sigaction sigactn;
   sigemptyset(&sigactn.sa_mask);
 
@@ -77,6 +65,7 @@ int main(int argc, char *argv[]) {
     printf("Pthread error:%s\n", strerror(errno));
     return -1;
   }
+
   // UNITERRUPTIBLE_SLEEP(1); // allow other threads to initialize
   // sigaddset(&mask_bit, MAGNETO_SIGNAL_OPT);
 
@@ -101,9 +90,6 @@ int main(int argc, char *argv[]) {
         magneto_heartbeat_flag = 0;
       }
     }
-
-
-  //   fflush(stdout);
 
   }
   pthread_join(magneto, NULL);
