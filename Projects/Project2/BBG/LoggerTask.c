@@ -7,6 +7,7 @@ typedef struct{
 	float pr_payload;
 }uartstructrelog;
 
+extern uint8_t magneto_exit_flag;
 void *LoggerTask(void *pthread_inf) {
 	int ret,len_bytes;
 	char buffer[BUFFER_SIZE];
@@ -49,7 +50,7 @@ void *LoggerTask(void *pthread_inf) {
   } 
   else{}
 	 
-	while(1)
+	while(magneto_exit_flag==0)
 	{
 	    len_bytes = mq_receive(msg_queue, (char *)log, BUFFER_SIZE, &priority);
 
@@ -61,9 +62,13 @@ void *LoggerTask(void *pthread_inf) {
 
 		else 
 		{
-
 			if ((magneto_heartbeat_flag==1)&&(i2c_glb_pass==1))
 			{
+				ledcount++;
+				if(ledcount%2==0)
+					LED_OFF;
+				else
+					LED_ON;
 				fprintf(pfd, "TIME: %s  LEVEL: 1 SOURCE: MAGNTEOMETER: %s MAG ALIVE\n\n", ((logger_pckt *)log)->time_stamp, ((logger_pckt *)log)->log_msg);
 				printf("TIME: %s  LEVEL: 1 SOURCE: MAGNTEOMETER: %s MAG ALIVE\n\n", ((logger_pckt *)log)->time_stamp, ((logger_pckt *)log)->log_msg);
 				magneto_heartbeat_flag = 0;

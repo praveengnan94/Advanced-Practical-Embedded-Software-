@@ -19,11 +19,6 @@ int main(int argc, char *argv[]) {
     strcpy(fileid, DEFAULT_FILE_NAME);
   }
   
-  // printf("LOGFILE name %s\n", fileid);
-
-  // magneto_close_flag=1;
-  // magneto_heartbeat_flag=0;
-
   int ret;
 
   pthread_t magneto,logger,comm;
@@ -55,29 +50,23 @@ int main(int argc, char *argv[]) {
     printf("Pthread error:%s\n", strerror(errno));
     return -1;
   }
-
-  while (1) 
+  READY_LED;
+  LED_ON;
+  while (magneto_exit_flag==0) 
   {
-    // check HB signals every 5 seconds for 5 tasks
+    // check HB signals every 1 seconds for 1 task
     UNITERRUPTIBLE_SLEEP(1);
 
-    if (magneto_exit_flag == 0) {
-      
-    }
+    killoption=getc(stdin);
+      if(killoption=='E'){
+          printf("CLOSING ALL TASKS\n");
+          magneto_exit_flag=1;
+      }
+
   }
   pthread_join(magneto, NULL);
   pthread_join(logger, NULL);
   pthread_join(comm, NULL);
   return 0;
 }
-
-
-// void magneto_heartbeat_handl(int sig) {
-//   if (sig == MAGNETO_SIG_HEARTBEAT) {
-//     if(i2c_glb_pass!=-1)
-//     magneto_heartbeat_flag = 1;
-//     else if(i2c_glb_pass==-1)
-//       magneto_heartbeat_flag=0;
-//   }
-// }
 

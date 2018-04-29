@@ -1,5 +1,7 @@
 #include "CommTask.h"
 // #define SOCKET 
+
+extern uint8_t magneto_exit_flag;
 void *CommTask(void *pthread_inf) {
 
 	int priority, len_bytes,ret;
@@ -78,7 +80,7 @@ while(1)
 }
 #else
 	uartinit();
-	while(1)
+	while(magneto_exit_flag==0)
 	{
 		ret=uartRead(uartstructnew);
 		if(ret<0)

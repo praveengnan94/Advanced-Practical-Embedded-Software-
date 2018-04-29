@@ -12,3 +12,5 @@
 #define PR_ALIVE 4
 
 extern int i2c_glb_pass;
+
+long int ledcount;

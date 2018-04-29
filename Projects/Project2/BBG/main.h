@@ -28,6 +28,7 @@ int i2c_glb_pass=1;
   } while (ret != 0);
 
 char* fileid;
+char killoption;
 
 uint8_t magneto_exit_flag = 0;
 uint8_t logger_exit_flag = 0;

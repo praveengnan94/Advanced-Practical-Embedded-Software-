@@ -1,6 +1,7 @@
 #include "MagnetoTask.h"
 
 extern int magneto_heartbeat_flag;
+extern uint8_t magneto_exit_flag;
 void *MagnetoTask(void *pthread_inf) {
   
   uint8_t initialize = 1;
@@ -84,7 +85,7 @@ void *MagnetoTask(void *pthread_inf) {
 
   float dir;
 
-  while(1)
+  while(magneto_exit_flag==0)
   {
 
   buffer[0]=STATUS_REG_M;
