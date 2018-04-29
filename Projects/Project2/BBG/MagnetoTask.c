@@ -6,7 +6,7 @@ void *MagnetoTask(void *pthread_inf) {
   uint8_t initialize = 1;
   char initialize_msg[8][4096];
 
-  int magn = Magneto_sensor_init();
+
   char magn_data[2], data_cel_str[BUFFER_SIZE - 200];
   float data_cel;
 
@@ -27,7 +27,7 @@ void *MagnetoTask(void *pthread_inf) {
 				return 0;
 			}
 
-
+ int magn = Magneto_sensor_init();
   if (magn == -1) 
   {
     initialize = 0;
@@ -176,6 +176,7 @@ If D is between 0 degrees and 67.5 degrees – North-East*/
   // else if((dir>67.5)||(dir<67.5))
   //   printf("EAST\n");
     logger_pckt magneto_log = {.log_level = 1};
+    
     sprintf(data_cel_str, "X: %d [G] Y: %d [G] Z: %d [G]", mxl,myl,mzl);
     strcpy(magneto_log.log_msg, data_cel_str);
 

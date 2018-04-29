@@ -1,5 +1,5 @@
 #include "CommTask.h"
-#define SOCKET -1
+// #define SOCKET 
 void *CommTask(void *pthread_inf) {
 
 	int priority, len_bytes,ret;
@@ -81,11 +81,12 @@ while(1)
 	while(1)
 	{
 		ret=uartRead(uartstructnew);
-
+		if(ret<0)
+			printf("UART READ FAILED\n");
     logger_pckt comm_log = {.log_level = 1};
 
     sprintf(data_cel_str, "%d\n %d\n %f\n %f\n", uartstructnew->clientid,uartstructnew->clientinfo,uartstructnew->uv_payload, uartstructnew->pr_payload);
-	printf("%d\n %d\n %f\n %f\n", uartstructnew->clientid,uartstructnew->clientinfo,uartstructnew->uv_payload, uartstructnew->pr_payload);
+	
     strcpy(comm_log.log_msg, data_cel_str);
 
 
@@ -103,7 +104,9 @@ while(1)
 				return 0;
 			}
 		        else
-		        {} 
+		        {
+		        	// printf("QUUE SENT\n");
+		        } 
 	}
 #endif
 }

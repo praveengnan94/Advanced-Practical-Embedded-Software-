@@ -62,14 +62,7 @@ int main(int argc, char *argv[]) {
     UNITERRUPTIBLE_SLEEP(1);
 
     if (magneto_exit_flag == 0) {
-      if ((magneto_heartbeat_flag==1)&&(i2c_glb_pass==1))
-      {
-        printf("[M]\n");
-        magneto_heartbeat_flag = 0;
-      }
-      else {
-        printf("NOO [M]\n");
-      }
+      
     }
   }
   pthread_join(magneto, NULL);

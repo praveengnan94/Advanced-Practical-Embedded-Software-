@@ -53,51 +53,74 @@ void *LoggerTask(void *pthread_inf) {
 	{
 	    len_bytes = mq_receive(msg_queue, (char *)log, BUFFER_SIZE, &priority);
 
+		if(len_bytes < 0) 
+		{
+			perror("Logger ERROR: \n");
+			return 0;
+		}
+
+		else 
+		{
+
+			if ((magneto_heartbeat_flag==1)&&(i2c_glb_pass==1))
+			{
+				fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: %s MAG ALIVE\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level, ((logger_pckt *)log)->log_msg);
+				printf("TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: %s MAG ALIVE\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level, ((logger_pckt *)log)->log_msg);
+				magneto_heartbeat_flag = 0;
+			}
+			else 
+			{
+				fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: MAG DEAD\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level);
+				printf("TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: MAG DEAD\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level);
+			}
+
+			fflush(pfd);
+        }
+
+    	len_bytes = mq_receive(msg_queue_comm, (char *)log_comm, BUFFER_SIZE, &priority);
+
 	        if(len_bytes < 0) 
 			{
 				perror("Logger ERROR: \n");
 				return 0;
 			}
 
-		        else 
+	        else 
 			{
-				fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: %s\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level, ((logger_pckt *)log)->log_msg);
+				char strtemp[26];
+				memcpy(strtemp,(void*)(logger_pckt *)(log_comm->log_msg),26);
+				char *tok1,*tok2,*tok3,*tok4;
+
+				tok1=strtok(strtemp,"\n");
+				tok2=strtok(NULL,"\n");
+				tok3=strtok(NULL,"\n");
+				tok4=strtok(NULL,"\n");
+
+				int clientstatus=atoi(tok2);
+				    
+				if(clientstatus&UV_ALIVE)
+				{
+					fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV ALIVE %s [UVI]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok3);
+					printf("TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV ALIVE %s [UVI]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok3);
+				}
+				else 
+				{
+					fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
+					printf("TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
+				}
+				if(clientstatus&PR_ALIVE)
+				{
+					fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR ALIVE %s [kPa]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok4);
+					printf("TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR ALIVE %s [kPa]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok4);
+				}
+				else 
+				{
+					fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
+					printf("TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
+				}
+				
         		fflush(pfd);
 	        }
-
-   //  	len_bytes = mq_receive(msg_queue_comm, (char *)log_comm, BUFFER_SIZE, &priority);
-
-	  //       if(len_bytes < 0) 
-			// {
-			// 	perror("Logger ERROR: \n");
-			// 	return 0;
-			// }
-
-	  //       else 
-			// {
-			// 	char strtemp[26];
-			// 	memcpy(strtemp,(void*)(logger_pckt *)(log_comm->log_msg),26);
-			// 	char *tok1,*tok2,*tok3,*tok4;
-
-			// 	tok1=strtok(strtemp,"\n");
-			// 	tok2=strtok(NULL,"\n");
-			// 	tok3=strtok(NULL,"\n");
-			// 	tok4=strtok(NULL,"\n");
-
-			// 	int clientstatus=atoi(tok2);
-				    
-			// 	if(clientstatus&UV_ALIVE)
-			// 		fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV ALIVE %s [UVI]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok3);
-			// 	else 
-			// 		fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
-			// 	if(clientstatus&PR_ALIVE)
-			// 		fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR ALIVE %s [kPa]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok4);
-			// 	else 
-			// 		fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
-			// 	// printf("TIME: %s  LEVEL: %d SOURCE: TIVA MESSAGE: %s\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, ((logger_pckt *)log_comm)->log_msg);
-				
-   //      		fflush(pfd);
-	  //       }
 
 	}
 	
