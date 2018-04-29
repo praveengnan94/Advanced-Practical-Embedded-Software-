@@ -64,14 +64,14 @@ void *LoggerTask(void *pthread_inf) {
 
 			if ((magneto_heartbeat_flag==1)&&(i2c_glb_pass==1))
 			{
-				fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: %s MAG ALIVE\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level, ((logger_pckt *)log)->log_msg);
-				printf("TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: %s MAG ALIVE\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level, ((logger_pckt *)log)->log_msg);
+				fprintf(pfd, "TIME: %s  LEVEL: 1 SOURCE: MAGNTEOMETER: %s MAG ALIVE\n\n", ((logger_pckt *)log)->time_stamp, ((logger_pckt *)log)->log_msg);
+				printf("TIME: %s  LEVEL: 1 SOURCE: MAGNTEOMETER: %s MAG ALIVE\n\n", ((logger_pckt *)log)->time_stamp, ((logger_pckt *)log)->log_msg);
 				magneto_heartbeat_flag = 0;
 			}
 			else 
 			{
-				fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: MAG DEAD\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level);
-				printf("TIME: %s  LEVEL: %d SOURCE: MAGNTEOMETER: MAG DEAD\n\n", ((logger_pckt *)log)->time_stamp,((logger_pckt *)log)->log_level);
+				fprintf(pfd, "TIME: %s  LEVEL: 2 SOURCE: MAGNTEOMETER: MAG DEAD\n\n", ((logger_pckt *)log)->time_stamp);
+				printf("TIME: %s  LEVEL: 2 SOURCE: MAGNTEOMETER: MAG DEAD\n\n", ((logger_pckt *)log)->time_stamp);
 			}
 
 			fflush(pfd);
@@ -100,23 +100,23 @@ void *LoggerTask(void *pthread_inf) {
 				    
 				if(clientstatus&UV_ALIVE)
 				{
-					fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV ALIVE %s [UVI]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok3);
-					printf("TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV ALIVE %s [UVI]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok3);
+					fprintf(pfd, "TIME: %s  LEVEL: 1 SOURCE: TIVA ID: %s UV ALIVE %s [UVI]\n\n", ((logger_pckt *)log_comm)->time_stamp, tok1,tok3);
+					printf("TIME: %s  LEVEL: 1 SOURCE: TIVA ID: %s UV ALIVE %s [UVI]\n\n", ((logger_pckt *)log_comm)->time_stamp, tok1,tok3);
 				}
 				else 
 				{
-					fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
-					printf("TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s UV DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
+					fprintf(pfd, "TIME: %s  LEVEL: 2 SOURCE: TIVA ID: %s UV DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp, tok1);
+					printf("TIME: %s  LEVEL: 2 SOURCE: TIVA ID: %s UV DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp, tok1);
 				}
 				if(clientstatus&PR_ALIVE)
 				{
-					fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR ALIVE %s [kPa]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok4);
-					printf("TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR ALIVE %s [kPa]\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1,tok4);
+					fprintf(pfd, "TIME: %s  LEVEL: 1 SOURCE: TIVA ID: %s PR ALIVE %s [kPa]\n\n", ((logger_pckt *)log_comm)->time_stamp, tok1,tok4);
+					printf("TIME: %s  LEVEL: 1 SOURCE: TIVA ID: %s PR ALIVE %s [kPa]\n\n", ((logger_pckt *)log_comm)->time_stamp, tok1,tok4);
 				}
 				else 
 				{
-					fprintf(pfd, "TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
-					printf("TIME: %s  LEVEL: %d SOURCE: TIVA ID: %s PR DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp,((logger_pckt *)log_comm)->log_level, tok1);
+					fprintf(pfd, "TIME: %s  LEVEL: 2 SOURCE: TIVA ID: %s PR DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp, tok1);
+					printf("TIME: %s  LEVEL: 2 SOURCE: TIVA ID: %s PR DEAD\n\n", ((logger_pckt *)log_comm)->time_stamp, tok1);
 				}
 				
         		fflush(pfd);
