@@ -44,7 +44,7 @@ int uartRead(uartstructre *uartstruct)
 {
   int count;
 
-  if ((count = read(uartfile, (void*)uartstruct, sizeof(uartstruct)))<0){   //receive the data
+  if ((count = read(uartfile, (void*)uartstruct, 16))<0){   //receive the data
       perror("Failed to read from the input\n");
      return -1;
    }
@@ -54,7 +54,7 @@ int uartRead(uartstructre *uartstruct)
       return -1;
    }
    else {
-      printf("The following UART count was read [%d]\n",count);
+      // printf("The following UART count was read [%d]\n",count);
       return 1;
    }
 }

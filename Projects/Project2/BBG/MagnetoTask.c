@@ -78,43 +78,43 @@ void *MagnetoTask(void *pthread_inf) {
 
   while(1)
   {
-  // uint8_t* temp;
-  // uint8_t mxl,myl,mzl;
-  // uint8_t mxh,myh,mzh;
-  // uint16_t mx,my,mz;
-  // float offx,offy,offz;
+  uint8_t* temp;
+  uint8_t mxl,myl,mzl;
+  uint8_t mxh,myh,mzh;
+  uint16_t mx,my,mz;
+  float offx,offy,offz;
 
-  // float dir;
+  float dir;
 
-  // buffer[0]=STATUS_REG_M;
-  // mxl=magn_VALUE_read(magn,buffer);
-  // while(!(mxl&7))
-  // {
-  //   buffer[0]=STATUS_REG_M;
-  //   mxl=magn_VALUE_read(magn,buffer);
+ /* buffer[0]=STATUS_REG_M;
+  mxl=magn_VALUE_read(magn,buffer);
+  while(!(mxl&7))
+  {
+    buffer[0]=STATUS_REG_M;
+    mxl=magn_VALUE_read(magn,buffer);
     
-  // }
+  }
 
-  // buffer[0]=OUT_X_L_M;
-  // mxl=magn_VALUE_read(magn,buffer);
+  buffer[0]=OUT_X_L_M;
+  mxl=magn_VALUE_read(magn,buffer);
 
   // buffer[0]=OUT_X_H_M;
   // mxh=magn_VALUE_read(magn,buffer);
   // mx=mxl<<8|mxh;
-  // // mx=mxl*0.48828125;
-  // // printf("%d,",mx);
+  // mx=mxl*0.48828125;
+  // printf("%d,",mx);
 
-  // buffer[0]=OUT_Y_L_M;
-  // myl=magn_VALUE_read(magn,buffer);
+  buffer[0]=OUT_Y_L_M;
+  myl=magn_VALUE_read(magn,buffer);
 
   // buffer[0]=OUT_Y_H_M;
   // myh=magn_VALUE_read(magn,buffer);
   // my=myl<<8|myh;
-  // // my=myl*0.48828125;
-  // // printf("%d,",my);
+  // my=myl*0.48828125;
+  // printf("%d,",my);
 
-  // buffer[0]=OUT_Z_L_M;
-  // mzl=magn_VALUE_read(magn,buffer);
+  buffer[0]=OUT_Z_L_M;
+  mzl=magn_VALUE_read(magn,buffer);*/
 
   // buffer[0]=OUT_Z_H_M;
   // mzh=magn_VALUE_read(magn,buffer);
@@ -174,9 +174,8 @@ If D is between 0 degrees and 67.5 degrees – North-East*/
   //   printf("SOUTH\n");
   // else if((dir>67.5)||(dir<67.5))
   //   printf("EAST\n");
-    data_cel=69;
-    logger_pckt magneto_log = {.log_level = 1, .log_source = magneto_Task};
-    sprintf(data_cel_str, "MAGNETO %f", data_cel);
+    logger_pckt magneto_log = {.log_level = 1};
+    sprintf(data_cel_str, "X: %d [G] Y: %d [G] Z: %d [G]", mxl,myl,mzl);
     strcpy(magneto_log.log_msg, data_cel_str);
 
 
@@ -186,7 +185,6 @@ If D is between 0 degrees and 67.5 degrees – North-East*/
     clock_gettime(CLOCK_MONOTONIC, &current);
     expire.tv_sec = current.tv_sec + 2;
     expire.tv_nsec = current.tv_nsec;
-    // num_bytes = mq_timedsend(msg_queue, (const char *)&magneto_log,sizeof(logger_pckt), MESSAGE_PRIORITY, &expire);
 
 
 
@@ -198,7 +196,6 @@ If D is between 0 degrees and 67.5 degrees – North-East*/
 
     magneto_flag_glb = 0;
     pthread_kill(pthread_info->main, MAGNETO_SIG_HEARTBEAT);
-    printf("SENDING TIME: %s  LEVEL: %d SOURCE: %d MESSAGE: %s\n\n", magneto_log.time_stamp,magneto_log.log_level, (&magneto_log)->log_source,(&magneto_log)->log_msg);
     len_bytes = mq_send(msg_queue,(const char *)&magneto_log,sizeof(logger_pckt), (unsigned int )MESSAGE_PRIORITY);
 		        if(len_bytes < 0) 
 			{

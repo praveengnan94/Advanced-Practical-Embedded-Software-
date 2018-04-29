@@ -7,5 +7,6 @@
 #include <time.h>
 #include <unistd.h>
 #include "msgque.h"
-// #include "loggerstructs.h"
 
+#define UV_ALIVE 1
+#define PR_ALIVE 4

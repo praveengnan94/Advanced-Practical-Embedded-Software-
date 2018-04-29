@@ -6,11 +6,10 @@
 #include "includes.h"
 
 typedef struct{
-	// uint32_t clientinfo;
-	// uint32_t serverinfo;
-	// float uv_payload;
-	// float pr_payload;
-	char buffer[30];
+	uint32_t clientid;
+	uint32_t clientinfo;
+	float uv_payload;
+	float pr_payload;
 }uartstructre;
 
 void uartinit();
