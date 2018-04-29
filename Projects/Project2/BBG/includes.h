@@ -25,9 +25,6 @@ char* fileid;
 
 pthread_mutex_t lock_i2c;
 
-
-
-
 // typedef enum{
 // init,
 // error,

@@ -13,6 +13,7 @@
 #include "LoggerTask.c"
 #include "CommTask.c"
 
+int i2c_glb_pass=1;
 
 #define UNITERRUPTIBLE_SLEEP(t)                                                               \
   struct timespec current, remaining;                                          \
@@ -37,8 +38,6 @@ int ret;
 
 void magneto_heartbeat_handl(int sig) ;
 
-sig_atomic_t logger_heartbeat_flag;
-sig_atomic_t magneto_heartbeat_flag;
-sig_atomic_t comm_heartbeat_flag;
+int magneto_heartbeat_flag;
 
 

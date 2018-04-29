@@ -1,10 +1,7 @@
-#include "adps9301.h"
-#include "tmp102.h"
-#include "includes.h"
-#include "msgque.h"
-#include "errorhandling.h"
-#include "notify.h"
-#include "threads.h"
+// #include "includes.h"
+// #include "msgque.h"
+// #include "notify.h"
+// #include "threads.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -20,4 +17,5 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
-// #include <unistd.h>
+#include <unistd.h>
+

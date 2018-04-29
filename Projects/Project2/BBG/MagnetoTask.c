@@ -1,5 +1,6 @@
 #include "MagnetoTask.h"
 
+extern int magneto_heartbeat_flag;
 void *MagnetoTask(void *pthread_inf) {
   
   uint8_t initialize = 1;
@@ -75,9 +76,6 @@ void *MagnetoTask(void *pthread_inf) {
   {
     sprintf(&(initialize_msg[1][0]), "Success Temptask init_timer \n");
   }
-
-  while(1)
-  {
   uint8_t* temp;
   uint8_t mxl,myl,mzl;
   uint8_t mxh,myh,mzh;
@@ -86,7 +84,10 @@ void *MagnetoTask(void *pthread_inf) {
 
   float dir;
 
- /* buffer[0]=STATUS_REG_M;
+  while(1)
+  {
+
+  buffer[0]=STATUS_REG_M;
   mxl=magn_VALUE_read(magn,buffer);
   while(!(mxl&7))
   {
@@ -114,7 +115,7 @@ void *MagnetoTask(void *pthread_inf) {
   // printf("%d,",my);
 
   buffer[0]=OUT_Z_L_M;
-  mzl=magn_VALUE_read(magn,buffer);*/
+  mzl=magn_VALUE_read(magn,buffer);
 
   // buffer[0]=OUT_Z_H_M;
   // mzh=magn_VALUE_read(magn,buffer);
@@ -191,11 +192,12 @@ If D is between 0 degrees and 67.5 degrees – North-East*/
 	threadTaskAttr *pthread_info = (threadTaskAttr *)pthread_inf;
    while (magneto_flag_glb == 0) 
     {
-      pthread_cond_wait(&cond_var_magneto, &lock_magneto);
+      // pthread_cond_wait(&cond_var_magneto, &lock_magneto);
+      // printf("MAGG %d\n",magneto_flag_glb);
     }
-
     magneto_flag_glb = 0;
-    pthread_kill(pthread_info->main, MAGNETO_SIG_HEARTBEAT);
+    magneto_heartbeat_flag=1;
+    // pthread_kill(pthread_info->main, MAGNETO_SIG_HEARTBEAT);
     len_bytes = mq_send(msg_queue,(const char *)&magneto_log,sizeof(logger_pckt), (unsigned int )MESSAGE_PRIORITY);
 		        if(len_bytes < 0) 
 			{
@@ -203,7 +205,8 @@ If D is between 0 degrees and 67.5 degrees – North-East*/
 				return 0;
 			}
 		        else
-		        {} 
+		        {
+            } 
 
 
   }

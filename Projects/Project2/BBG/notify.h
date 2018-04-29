@@ -11,8 +11,8 @@
 #define FREQ_NSEC (1000000000)
 
 #define MAGNETO_SIGNAL_OPT    (SIGRTMAX)
-#define MAGNETO_SIG_HEARTBEAT (SIGRTMAX-4)
-#define MAGNETO_SIG (SIGRTMAX-10)
+#define MAGNETO_SIG_HEARTBEAT (SIGRTMAX-1)
+#define MAGNETO_SIG (SIGRTMAX-2)
 
 sig_atomic_t magneto_close_flag;
 

@@ -1,5 +1,5 @@
 #include "CommTask.h"
-
+#define SOCKET -1
 void *CommTask(void *pthread_inf) {
 
 	int priority, len_bytes,ret;
@@ -25,16 +25,38 @@ void *CommTask(void *pthread_inf) {
 			perror("ERROR:\n"); 
 			return 0;
 		}
+#ifdef SOCKET
+		int num_char;
+  int listenfd = 0, connfd = 0;
+    struct sockaddr_in serv_addr; 
 
-	uartinit();
-	while(1)
-	{
-		ret=uartRead(uartstructnew);
+    char sendBuff[1025];
+    time_t ticks; 
 
+    listenfd = socket(AF_INET, SOCK_STREAM, 0);
+    memset(&serv_addr, '0', sizeof(serv_addr));
+    memset(sendBuff, '0', sizeof(sendBuff)); 
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serv_addr.sin_port = htons(5000); 
+
+    bind(listenfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
+
+    listen(listenfd, 10); 
+    connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
+while(1)
+{
+
+	num_char = read(connfd, sendBuff, sizeof(sendBuff));
+    if (num_char < 0) 
+    {
+      break;
+    }
+    uartstructnew=(uartstructre *)sendBuff;
     logger_pckt comm_log = {.log_level = 1};
 
     sprintf(data_cel_str, "%d\n %d\n %f\n %f\n", uartstructnew->clientid,uartstructnew->clientinfo,uartstructnew->uv_payload, uartstructnew->pr_payload);
-
     strcpy(comm_log.log_msg, data_cel_str);
 
 
@@ -45,7 +67,36 @@ void *CommTask(void *pthread_inf) {
     expire.tv_sec = current.tv_sec + 2;
     expire.tv_nsec = current.tv_nsec;
 
-len_bytes = mq_send(msg_queue,(const char *)&comm_log,sizeof(logger_pckt), (unsigned int )MESSAGE_PRIORITY);
+	len_bytes = mq_send(msg_queue,(const char *)&comm_log,sizeof(logger_pckt), (unsigned int )MESSAGE_PRIORITY);
+    if(len_bytes < 0) 
+	{
+		printf("ERROR: child_to_parent message sending fail\n"); 
+		return 0;
+	}
+        else
+        {} 
+}
+#else
+	uartinit();
+	while(1)
+	{
+		ret=uartRead(uartstructnew);
+
+    logger_pckt comm_log = {.log_level = 1};
+
+    sprintf(data_cel_str, "%d\n %d\n %f\n %f\n", uartstructnew->clientid,uartstructnew->clientinfo,uartstructnew->uv_payload, uartstructnew->pr_payload);
+	printf("%d\n %d\n %f\n %f\n", uartstructnew->clientid,uartstructnew->clientinfo,uartstructnew->uv_payload, uartstructnew->pr_payload);
+    strcpy(comm_log.log_msg, data_cel_str);
+
+
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    strcpy(comm_log.time_stamp, asctime(tm));
+    clock_gettime(CLOCK_MONOTONIC, &current);
+    expire.tv_sec = current.tv_sec + 2;
+    expire.tv_nsec = current.tv_nsec;
+
+	len_bytes = mq_send(msg_queue,(const char *)&comm_log,sizeof(logger_pckt), (unsigned int )MESSAGE_PRIORITY);
 		        if(len_bytes < 0) 
 			{
 				printf("ERROR: child_to_parent message sending fail\n"); 
@@ -54,4 +105,5 @@ len_bytes = mq_send(msg_queue,(const char *)&comm_log,sizeof(logger_pckt), (unsi
 		        else
 		        {} 
 	}
+#endif
 }

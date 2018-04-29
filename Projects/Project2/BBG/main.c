@@ -21,18 +21,8 @@ int main(int argc, char *argv[]) {
   
   // printf("LOGFILE name %s\n", fileid);
 
-  magneto_close_flag=1;
-  magneto_heartbeat_flag=0;
-
-  struct sigaction sigactn;
-  sigemptyset(&sigactn.sa_mask);
-
-  sigactn.sa_handler = magneto_heartbeat_handl;
-  ret = sigaction(MAGNETO_SIG_HEARTBEAT, &sigactn, NULL);
-  if (ret == -1) {
-    perror("SIGACTION ERROR");
-    return -1;
-  }
+  // magneto_close_flag=1;
+  // magneto_heartbeat_flag=0;
 
   int ret;
 
@@ -68,19 +58,19 @@ int main(int argc, char *argv[]) {
 
   while (1) 
   {
-
     // check HB signals every 5 seconds for 5 tasks
     UNITERRUPTIBLE_SLEEP(1);
 
     if (magneto_exit_flag == 0) {
-      if (magneto_heartbeat_flag == 0)
-        printf("Magneto task no heartbeat\n");
-      else {
+      if ((magneto_heartbeat_flag==1)&&(i2c_glb_pass==1))
+      {
         printf("[M]\n");
         magneto_heartbeat_flag = 0;
       }
+      else {
+        printf("NOO [M]\n");
+      }
     }
-
   }
   pthread_join(magneto, NULL);
   pthread_join(logger, NULL);
@@ -89,9 +79,12 @@ int main(int argc, char *argv[]) {
 }
 
 
-void magneto_heartbeat_handl(int sig) {
-  if (sig == MAGNETO_SIG_HEARTBEAT) {
-    magneto_heartbeat_flag = 1;
-  }
-}
+// void magneto_heartbeat_handl(int sig) {
+//   if (sig == MAGNETO_SIG_HEARTBEAT) {
+//     if(i2c_glb_pass!=-1)
+//     magneto_heartbeat_flag = 1;
+//     else if(i2c_glb_pass==-1)
+//       magneto_heartbeat_flag=0;
+//   }
+// }
 

@@ -18,3 +18,4 @@
 #include <time.h>
 #include <unistd.h>
 #include "uartServer.h"
+#include "sockets.h"
