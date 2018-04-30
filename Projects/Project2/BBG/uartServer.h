@@ -1,3 +1,10 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : uartServer.h
+                  
+* SOURCE FILES  : uartServer.c
+****************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>

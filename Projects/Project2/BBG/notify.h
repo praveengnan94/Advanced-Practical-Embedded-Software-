@@ -1,7 +1,7 @@
 /***************************************************************
-* AUTHOR  : Praveen Gnanaseakran
-* DATE    : 03/08/2018
-* DESCRITPTION  : NOTIFY FILES
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : notify.h
                   
 * SOURCE FILES  : notify.c
 ****************************************************************/

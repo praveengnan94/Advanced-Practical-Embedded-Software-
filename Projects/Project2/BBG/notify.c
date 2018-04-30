@@ -1,3 +1,10 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : notify.c
+                  
+* HEADER FILES  : notify.h
+****************************************************************/
 #include <stdio.h>
 #include <errno.h>
 #include <pthread.h>

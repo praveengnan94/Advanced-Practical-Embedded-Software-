@@ -1,9 +1,9 @@
 /***************************************************************
-* AUTHOR  : Praveen Gnanaseakran
-* DATE    : 03/08/2018
-* DESCRITPTION  : TEMPERATURE FUNCTIONS
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : lsm9ds1.h
                   
-* SOURCE FILES  : tmp102.c
+* SOURCE FILES  : lsm9ds1.c
 ****************************************************************/
 
 #include <stdio.h>

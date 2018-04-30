@@ -1,7 +1,10 @@
-// #include "includes.h"
-// #include "msgque.h"
-// #include "notify.h"
-// #include "threads.h"
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : sockets.h
+                  
+* SOURCE FILES  : sockets.c
+****************************************************************/
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>

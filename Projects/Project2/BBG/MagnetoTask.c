@@ -1,3 +1,10 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : MagnetoTask.c
+                  
+* HEADER FILES  : MagnetoTask.h
+****************************************************************/
 #include "MagnetoTask.h"
 
 extern int magneto_heartbeat_flag;

@@ -1,3 +1,11 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : AccelTask.c
+                  
+* HEADER FILES  : AccelTask.h
+****************************************************************/
+
 #include "AccelTask.h"
 
 extern int accel_heartbeat_flag;

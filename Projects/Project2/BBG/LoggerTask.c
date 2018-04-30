@@ -1,3 +1,10 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : LoggerTask.c
+                  
+* HEADER FILES  : LoggerTask.h
+****************************************************************/
 #include "LoggerTask.h"
 
 typedef struct{

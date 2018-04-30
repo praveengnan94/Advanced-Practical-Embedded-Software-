@@ -1,3 +1,10 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : CommTask.h
+                  
+* SOURCE FILES  : CommTask.c
+****************************************************************/
 #include "lsm9ds1.h"
 #include "msgque.h"
 #include "notify.h"

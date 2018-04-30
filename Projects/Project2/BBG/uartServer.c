@@ -1,3 +1,10 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : uartServer.c
+                  
+* HEADER FILES  : uartServer.h
+****************************************************************/
 #include "uartServer.h"
 
 void uartinit()

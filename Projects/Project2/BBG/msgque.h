@@ -1,5 +1,10 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : msgque.h
+                  
+****************************************************************/
 #include <mqueue.h>
-
 
 #define BUFFER_SIZE 4096
 #define MESSAGEQ_SIZE 10

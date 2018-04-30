@@ -1,3 +1,11 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : CommTask.c
+                  
+* HEADER FILES  : CommTask.h
+****************************************************************/
+
 #include "CommTask.h"
 #define SOCKET 
 

@@ -1,3 +1,10 @@
+/***************************************************************
+* AUTHOR  : Praveen Gnanasekaran
+* DATE    : 04/28/2018
+* DESCRITPTION  : main.h
+                  
+* SOURCE FILES  : main.c
+****************************************************************/
 #include <errno.h>
 #include <mqueue.h>
 #include <pthread.h>
