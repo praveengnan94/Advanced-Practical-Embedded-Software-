@@ -14,6 +14,9 @@
 char* fileid;
 #define BUFFER_SIZE 4096
 
+#define CONFIG_UART_P924 (system("config-pin P9.24 uart"))
+#define CONFIG_UART_P926 (system("config-pin P9.26 uart"))
+
 #define LED_ON (system("echo 1 > /sys/class/leds/beaglebone:green:usr0/brightness"))
 #define LED_OFF (system("echo 0 > /sys/class/leds/beaglebone:green:usr0/brightness"))
 

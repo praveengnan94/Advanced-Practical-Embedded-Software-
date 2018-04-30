@@ -1,5 +1,5 @@
 #include "CommTask.h"
-// #define SOCKET 
+#define SOCKET 
 
 extern uint8_t magneto_exit_flag;
 void *CommTask(void *pthread_inf) {
@@ -79,6 +79,8 @@ while(magneto_exit_flag==0)
         {} 
 }
 #else
+	CONFIG_UART_P924;
+  CONFIG_UART_P926;
 	uartinit();
 	while(magneto_exit_flag==0)
 	{

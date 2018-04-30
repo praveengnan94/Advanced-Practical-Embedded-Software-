@@ -108,6 +108,9 @@ void *MagnetoTask(void *pthread_inf) {
   buffer[0]=OUT_Y_L_M;
   myl=magn_VALUE_read(magn,buffer);
 
+  buffer[0]=OUT_Z_L_M;
+  mzl=magn_VALUE_read(magn,buffer);
+
 
     logger_pckt magneto_log = {.log_level = 1};
 
