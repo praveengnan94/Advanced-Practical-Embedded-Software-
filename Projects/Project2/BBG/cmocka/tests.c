@@ -11,6 +11,17 @@
 
 #define BUFFER_SIZE 1024
 
+<<<<<<< HEAD
+int num_char;
+int listenfd = 0, connfd = 0;
+struct sockaddr_in serv_addr; 
+
+char sendBuff[1025];
+time_t ticks; 
+
+
+=======
+>>>>>>> 9ec71a17e9275757e33974cda27d2b80017b0a89
 void testsocketcreate(void **state) {
   int num_char;
   int listenfd = 0, connfd = 0;
@@ -26,6 +37,9 @@ void testsocketcreate(void **state) {
 }
 
 void testsocketaccept(void **state) {
+<<<<<<< HEAD
+  
+=======
   int num_char;
   int listenfd = 0, connfd = 0;
   struct sockaddr_in serv_addr; 
@@ -33,6 +47,7 @@ void testsocketaccept(void **state) {
   char sendBuff[1025];
   time_t ticks; 
 
+>>>>>>> 9ec71a17e9275757e33974cda27d2b80017b0a89
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
   memset(&serv_addr, '0', sizeof(serv_addr));
   memset(sendBuff, '0', sizeof(sendBuff)); 
@@ -50,6 +65,8 @@ void testsocketaccept(void **state) {
 
 void testsocketread(void **state) {
   int num_char;
+<<<<<<< HEAD
+=======
   int listenfd = 0, connfd = 0;
   struct sockaddr_in serv_addr; 
 
@@ -68,11 +85,28 @@ void testsocketread(void **state) {
 
   listen(listenfd, 10); 
   connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
+>>>>>>> 9ec71a17e9275757e33974cda27d2b80017b0a89
 
   num_char = read(connfd, sendBuff, sizeof(sendBuff));
   assert_int_not_equal(0,num_char);
 }
 
+<<<<<<< HEAD
+void testsocketcompare(void **state) {
+  assert_int_not_equal(0,strcmp("TEST",sendBuff));
+}
+
+
+int main(void) {
+  const struct UnitTest tests[] = {
+      unit_test(testsocketcreate),
+      unit_test(testsocketaccept),
+      unit_test(testsocketread),
+      unit_test(testsocketcompare)
+  };
+
+  return run_tests(tests);
+=======
 
 int main(void) {
   const struct CMUnitTest tests[] = {
@@ -82,5 +116,6 @@ int main(void) {
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
+>>>>>>> 9ec71a17e9275757e33974cda27d2b80017b0a89
 }
 
