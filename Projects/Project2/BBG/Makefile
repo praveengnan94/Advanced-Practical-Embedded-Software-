@@ -7,6 +7,9 @@ i2c_wrap.o: i2c_wrap.c
 MagnetoTask.o:MagnetoTask.c  includes.h 
 	gcc -c -o $@ $<  -lpthread -lrt
 
+AccelTask.o:AccelTask.c  includes.h 
+	gcc -c -o $@ $<  -lpthread -lrt
+
 LoggerTask.o:LoggerTask.c includes.h
 	gcc -c -o $@ $<  -lpthread -lrt
 

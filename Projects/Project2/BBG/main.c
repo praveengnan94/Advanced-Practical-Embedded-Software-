@@ -21,19 +21,28 @@ int main(int argc, char *argv[]) {
   
   int ret;
 
-  pthread_t magneto,logger,comm;
-  threadTaskAttr magneto_task_info,logger_task_info,comm_task_info;
+  pthread_t magneto,logger,comm,accel;
+  threadTaskAttr magneto_task_info,logger_task_info,comm_task_info,accel_task_info;
 
   magneto_task_info.t_id=1;
   magneto_task_info.main=pthread_self();
 
-  logger_task_info.t_id=2;
+  accel_task_info.t_id=2;
+  accel_task_info.main=pthread_self();
+
+  logger_task_info.t_id=3;
   logger_task_info.main=pthread_self();
 
-  comm_task_info.t_id=3;
+  comm_task_info.t_id=4;
   comm_task_info.main=pthread_self();
 
   ret = pthread_create(&magneto, DEFAULT_THREAD_ATTR, MagnetoTask, (void *)&(magneto_task_info));
+  if (ret != 0) {
+    printf("Pthread error:%s\n", strerror(errno));
+    return -1;
+  }
+
+  ret = pthread_create(&accel, DEFAULT_THREAD_ATTR, AccelTask, (void *)&(accel_task_info));
   if (ret != 0) {
     printf("Pthread error:%s\n", strerror(errno));
     return -1;
@@ -55,7 +64,7 @@ int main(int argc, char *argv[]) {
   while (magneto_exit_flag==0) 
   {
     // check HB signals every 1 seconds for 1 task
-    UNITERRUPTIBLE_SLEEP(1);
+    // UNITERRUPTIBLE_SLEEP(1);
 
     killoption=getc(stdin);
       if(killoption=='E'){
@@ -65,6 +74,7 @@ int main(int argc, char *argv[]) {
 
   }
   pthread_join(magneto, NULL);
+  pthread_join(accel, NULL);
   pthread_join(logger, NULL);
   pthread_join(comm, NULL);
   return 0;

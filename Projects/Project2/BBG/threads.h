@@ -30,6 +30,5 @@ typedef struct
         pthread_t main;
 } threadTaskAttr;
 
-void *AccelTask(void *pthread_inf);
 
 #endif

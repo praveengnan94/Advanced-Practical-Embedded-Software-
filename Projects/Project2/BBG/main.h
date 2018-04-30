@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include "notify.h"
 #include "MagnetoTask.c"
+#include "AccelTask.c"
 #include "LoggerTask.c"
 #include "CommTask.c"
 
@@ -31,6 +32,7 @@ char* fileid;
 char killoption;
 
 uint8_t magneto_exit_flag = 0;
+uint8_t accel_exit_flag = 0;
 uint8_t logger_exit_flag = 0;
 uint8_t comm_exit_flag = 0;
 
@@ -40,5 +42,6 @@ int ret;
 void magneto_heartbeat_handl(int sig) ;
 
 int magneto_heartbeat_flag;
+int accel_heartbeat_flag;
 
 

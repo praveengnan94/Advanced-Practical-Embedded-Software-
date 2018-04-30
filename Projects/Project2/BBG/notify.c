@@ -37,4 +37,5 @@ int magneto_init_timer(){
 
 void magneto_timer_sig_handler(int sig){
     magneto_flag_glb = 1;
+    accel_flag_glb = 1;
 }

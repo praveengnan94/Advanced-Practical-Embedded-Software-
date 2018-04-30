@@ -16,6 +16,12 @@ int Magneto_sensor_init() {
   return magn;
 }
 
+int Accel_sensor_init() {
+  int accel;
+  accel = i2cInit("/dev/i2c-2", accel, ACCEL_ADDR);
+  return accel;
+}
+
 void magn_CONFIG_write(int file_handler, char *buffer) {
   if(i2cWrite(file_handler, buffer, 2)<0)
   	{

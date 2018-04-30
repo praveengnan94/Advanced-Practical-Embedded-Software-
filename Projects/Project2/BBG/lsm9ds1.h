@@ -38,12 +38,27 @@
 #define MAG_CTRL_REG4_CONFIG 0x00
 #define MAG_CTRL_REG5_CONFIG 0x00
 
+#define ACCEL_CTRL_REG5_XL_ADDR 0x1F
+#define ACCEL_CTRL_REG6_XL_ADDR 0x20
+#define ACCEL_CTRL_REG7_XL_ADDR 0x21
+
+#define ACCEL_CTRL_REG5_XL_CONFIG 0x38
+#define ACCEL_CTRL_REG6_XL_CONFIG 0x80
+#define ACCEL_CTRL_REG7_XL_CONFIG 0x00
+
 #define OUT_X_L_M 0x28
 #define OUT_X_H_M 0x29
 #define OUT_Y_L_M 0x2A
 #define OUT_Y_H_M 0x2B
 #define OUT_Z_L_M 0x2C
 #define OUT_Z_H_M 0x2D
+
+#define OUT_X_L_A 0x28
+#define OUT_X_H_A 0x29
+#define OUT_Y_L_A 0x2A
+#define OUT_Y_H_A 0x2B
+#define OUT_Z_L_A 0x2C
+#define OUT_Z_H_A 0x2D
 
 #define OFFSET_X_REG_L_M 0x05
 #define OFFSET_X_REG_H_M 0x06
@@ -53,8 +68,10 @@
 #define OFFSET_Z_REG_H_M 0x0A
 
 #define STATUS_REG_M 0x27
+#define STATUS_REG_A 0x27
 
 int Magneto_sensor_init();
+int Accel_sensor_init();
 void magn_CONFIG_write(int file_handler, char *buffer);
 void magn_CONFIG_read(int file_handler, char *buffer);
 

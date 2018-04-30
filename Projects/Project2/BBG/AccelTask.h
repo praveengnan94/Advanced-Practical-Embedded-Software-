@@ -9,8 +9,8 @@
 #include "lsm9ds1.h"
 #include "msgque.h"
 #include <math.h>
-#include "threads.h"
-#include "loggerstructs.h"
+// #include "threads.h"
+// #include "loggerstructs.h"
 
 struct timespec current, expire;
 int num_bytes;

@@ -47,7 +47,7 @@ void *CommTask(void *pthread_inf) {
 
     listen(listenfd, 10); 
     connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
-while(1)
+while(magneto_exit_flag==0)
 {
 
 	num_char = read(connfd, sendBuff, sizeof(sendBuff));

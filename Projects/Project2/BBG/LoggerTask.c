@@ -7,6 +7,7 @@ typedef struct{
 	float pr_payload;
 }uartstructrelog;
 
+// extern int accel_heartbeat_flag;
 extern uint8_t magneto_exit_flag;
 void *LoggerTask(void *pthread_inf) {
 	int ret,len_bytes;
@@ -22,11 +23,19 @@ void *LoggerTask(void *pthread_inf) {
                     .mq_flags = 0
 				};
 
-        mqd_t msg_queue,msg_queue_comm;
+        mqd_t msg_queue,msg_queue_comm,msg_queue2;
 
 	msg_queue = mq_open(ACCEL_MSGQ_IPC, O_RDWR , S_IRWXU,&attr);
 
 	        if(msg_queue < 0) 
+			{ 
+				perror("ERROR:\n"); 
+				return 0;
+			}
+
+	msg_queue2 = mq_open(MAGNETO_MSGQ_IPC, O_RDWR , S_IRWXU,&attr);
+
+	        if(msg_queue2 < 0) 
 			{ 
 				perror("ERROR:\n"); 
 				return 0;
@@ -77,6 +86,37 @@ void *LoggerTask(void *pthread_inf) {
 			{
 				fprintf(pfd, "TIME: %s  LEVEL: 2 SOURCE: MAGNTEOMETER: MAG DEAD\n\n", ((logger_pckt *)log)->time_stamp);
 				printf("TIME: %s  LEVEL: 2 SOURCE: MAGNTEOMETER: MAG DEAD\n\n", ((logger_pckt *)log)->time_stamp);
+			}
+
+			fflush(pfd);
+        }
+
+
+        len_bytes = mq_receive(msg_queue2, (char *)log, BUFFER_SIZE, &priority);
+
+		if(len_bytes < 0) 
+		{
+			perror("Logger ERROR: \n");
+			return 0;
+		}
+
+		else 
+		{
+			if ((accel_heartbeat_flag==1)&&(i2c_glb_pass==1))
+			{
+				ledcount++;
+				if(ledcount%2==0)
+					LED_OFF;
+				else
+					LED_ON;
+				fprintf(pfd, "TIME: %s  LEVEL: 1 SOURCE: ACCELEROMETER: %s ACCEL ALIVE\n\n", ((logger_pckt *)log)->time_stamp, ((logger_pckt *)log)->log_msg);
+				printf("TIME: %s  LEVEL: 1 SOURCE: ACCELEROMETER: %s ACCEL ALIVE\n\n", ((logger_pckt *)log)->time_stamp, ((logger_pckt *)log)->log_msg);
+				accel_heartbeat_flag = 0;
+			}
+			else 
+			{
+				fprintf(pfd, "TIME: %s  LEVEL: 2 SOURCE: ACCELEROMETER: ACCEL DEAD\n\n", ((logger_pckt *)log)->time_stamp);
+				printf("TIME: %s  LEVEL: 2 SOURCE: ACCELEROMETER: ACCEL DEAD\n\n", ((logger_pckt *)log)->time_stamp);
 			}
 
 			fflush(pfd);
