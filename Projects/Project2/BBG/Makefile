@@ -25,8 +25,5 @@ lsm9ds1.o: lsm9ds1.c i2c_wrap.c
 notify.o:notify.c
 	gcc -c -o $@ $<
 
-tests: tests.c MagnetoTask.o AccelTask.o i2c_wrap.o 
-        gcc -o $@ $^ -lcmocka -lm -lrt -pthread
-
 clean:
 	rm -f *.o *.elf logfile.txt ./remote_request/*.o
