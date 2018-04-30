@@ -104,11 +104,11 @@ void *LoggerTask(void *pthread_inf) {
 		{
 			if ((accel_heartbeat_flag==1)&&(i2c_glb_pass==1))
 			{
-				ledcount++;
-				if(ledcount%2==0)
-					LED_OFF;
+				ledcount2++;
+				if(ledcount2%2==0)
+					LED_OFF2;
 				else
-					LED_ON;
+					LED_ON2;
 				fprintf(pfd, "TIME: %s  LEVEL: 1 SOURCE: ACCELEROMETER: %s ACCEL ALIVE\n\n", ((logger_pckt *)log)->time_stamp, ((logger_pckt *)log)->log_msg);
 				printf("TIME: %s  LEVEL: 1 SOURCE: ACCELEROMETER: %s ACCEL ALIVE\n\n", ((logger_pckt *)log)->time_stamp, ((logger_pckt *)log)->log_msg);
 				accel_heartbeat_flag = 0;

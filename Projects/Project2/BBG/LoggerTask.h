@@ -13,4 +13,4 @@
 
 extern int i2c_glb_pass;
 
-long int ledcount;
+long int ledcount,ledcount2;

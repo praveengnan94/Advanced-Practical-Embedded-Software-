@@ -60,7 +60,9 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   READY_LED;
+  READY_LED2;
   LED_ON;
+  LED_ON2;
   while (magneto_exit_flag==0) 
   {
     // check HB signals every 1 seconds for 1 task
